@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Linux命令-top简介top相当于是Linux下的任务管理器，能够实时显示系统中各个进程的资源占用状况，MAN手册中的解释如下图。top是一个动态显示过程，即可以通过用户按键来不断刷新当前状态。 用法在终端输入top命令，即出现如下效果：使用{q}退出。 参数解释top命令执行后主要由四个信息区域，从上至下分别表示了系统运行时间和平均负载、任务和CPU状态、内存使用情况以及进程相信信息。 系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux命令-top">
+<meta property="og:url" content="http://yoursite.com/2019/11/01/linux-commond-top/index.html">
+<meta property="og:site_name" content="Oak">
+<meta property="og:description" content="Linux命令-top简介top相当于是Linux下的任务管理器，能够实时显示系统中各个进程的资源占用状况，MAN手册中的解释如下图。top是一个动态显示过程，即可以通过用户按键来不断刷新当前状态。 用法在终端输入top命令，即出现如下效果：使用{q}退出。 参数解释top命令执行后主要由四个信息区域，从上至下分别表示了系统运行时间和平均负载、任务和CPU状态、内存使用情况以及进程相信信息。 系统">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/uploads/2019/10/image-1571465489845.png">
+<meta property="og:image" content="http://yoursite.com/uploads/2019/10/image-1571465014787.png">
+<meta property="article:published_time" content="2019-11-01T09:26:04.000Z">
+<meta property="article:modified_time" content="2020-03-26T07:34:40.705Z">
+<meta property="article:author" content="zhangpu">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/uploads/2019/10/image-1571465489845.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/01/linux-commond-top/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Linux命令-top | Oak</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Oak</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/01/linux-commond-top/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhangpu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux命令-top
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-01 17:26:04" itemprop="dateCreated datePublished" datetime="2019-11-01T17:26:04+08:00">2019-11-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-26 15:34:40" itemprop="dateModified" datetime="2020-03-26T15:34:40+08:00">2020-03-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/Linux%E5%91%BD%E4%BB%A4/" itemprop="url" rel="index"><span itemprop="name">Linux命令</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Linux命令-top"><a href="#Linux命令-top" class="headerlink" title="Linux命令-top"></a>Linux命令-top</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>top相当于是Linux下的任务管理器，能够实时显示系统中各个进程的资源占用状况，MAN手册中的解释如下图。top是一个动态显示过程，即可以通过用户按键来不断刷新当前状态。<br><img src="/uploads/2019/10/image-1571465489845.png" alt="Linux MAN手册对top命令的描述"></p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><p>在终端输入<code>top</code>命令，即出现如下效果：<br><img src="/uploads/2019/10/image-1571465014787.png" alt="top命令运行效果"><br>使用<code>{q}</code>退出。</p>
+<h3 id="参数解释"><a href="#参数解释" class="headerlink" title="参数解释"></a>参数解释</h3><p><code>top</code>命令执行后主要由四个信息区域，从上至下分别表示了系统运行时间和平均负载、任务和CPU状态、内存使用情况以及进程相信信息。</p>
+<h4 id="系统运行时间和平均负载"><a href="#系统运行时间和平均负载" class="headerlink" title="系统运行时间和平均负载"></a>系统运行时间和平均负载</h4><p>系统运行时间和平均负载：</p>
+<ul>
+<li>第一行<ul>
+<li><code>14:03:03</code>：运行时间</li>
+<li><code>5:46</code>：系统开机到现在经过了多少时间</li>
+<li><code>4 users</code>：当前4个用户在线</li>
+<li><code>load average: 0.00, 0.01, 0.05</code>：最近1分钟、5分钟和15分钟的CPU负载信息</li>
+</ul>
+</li>
+</ul>
+<h4 id="任务和CPU状态"><a href="#任务和CPU状态" class="headerlink" title="任务和CPU状态"></a>任务和CPU状态</h4><p>任务和CPU状态由两行构成，显示了系统任务运行情况和CPU的状态</p>
+<ul>
+<li><p>第一行</p>
+<ul>
+<li><code>Tasks: 246 total</code>：总共有246个任务在运行</li>
+<li><code>2 running, 244 sleeping,   0 stopped,   0 zombie</code>：其中2个进程处于运行态，244个进程处于睡眠态（等待状态），0个进程停止，0个进程僵死</li>
+</ul>
+</li>
+<li><p>第二行展示了两次刷新间各类应用占用CPU时间的百分比</p>
+<ul>
+<li><code>1.7 us</code>：用户态进程的时间</li>
+<li><code>4.4 sy</code>：运行内核进程的时间</li>
+<li><code>0.0 ni</code>：运行良好的用户进程的时间</li>
+<li><code>93.7 id</code>：CPU空闲的时间</li>
+<li><code>0.1 wa</code>：等待I/O完成的时间</li>
+<li><code>0.0 hi</code>：硬件中断花费的时间</li>
+<li><code>0.1 si</code>：软中断花费的时间</li>
+<li><code>0.0 st</code>：虚拟机占用的时间</li>
+</ul>
+</li>
+</ul>
+<h4 id="内存使用情况"><a href="#内存使用情况" class="headerlink" title="内存使用情况"></a>内存使用情况</h4><p>内存使用情况由两行构成，描述了物理内存及虚拟内存的使用情况</p>
+<ul>
+<li><p>第一行，描述了物理内存的情况</p>
+<ul>
+<li><code>4026224 total</code>：内存总数</li>
+<li><code>2080500 freel</code>：空闲（可用）内存空间</li>
+<li><code>1021168 usedl</code>：已用内存</li>
+<li><code>924556 buff/cache</code>：用作内核缓存的内存量</li>
+</ul>
+</li>
+<li><p>第二行，描述了虚拟内存的情况</p>
+<ul>
+<li><code>4063228 total</code>：虚拟内存总数</li>
+<li><code>4063228 free</code>：空闲（可用）虚拟内存空间</li>
+<li><code>0 used</code>：已用虚拟内存</li>
+<li><code>2747656 avail Mem</code>：</li>
+</ul>
+</li>
+</ul>
+<p>其中单位换算方式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">KiB &#x3D; kibibyte &#x3D; 1024 bytes</span><br><span class="line">MiB &#x3D; mebibyte &#x3D; 1024 KiB &#x3D; 1,048,576 bytes</span><br><span class="line">GiB &#x3D; gibibyte &#x3D; 1024 MiB &#x3D; 1,073,741,824 bytes</span><br><span class="line">TiB &#x3D; tebibyte &#x3D; 1024 GiB &#x3D; 1,099,511,627,776 bytes</span><br><span class="line">PiB &#x3D; pebibyte &#x3D; 1024 TiB &#x3D; 1,125,899,906,842,624 bytes</span><br><span class="line">EiB &#x3D; exbibyte &#x3D; 1024 PiB &#x3D; 1,152,921,504,606,846,976 bytes</span><br></pre></td></tr></table></figure>
+
+<h4 id="进程信息"><a href="#进程信息" class="headerlink" title="进程信息"></a>进程信息</h4><p>进程信息详细列出了进程的相关情况</p>
+<ul>
+<li>PID：进程的ID</li>
+<li>USER：进程所有者</li>
+<li>PR：进程的优先级别，越小越优先被执行</li>
+<li>NInice：值</li>
+<li>VIRT：进程占用的虚拟内存</li>
+<li>RES：进程占用的物理内存</li>
+<li>SHR：进程使用的共享内存</li>
+<li>S：进程的状态。S表示休眠，R表示正在运行，Z表示僵死状态，N表示该进程优先值为负数</li>
+<li>%CPU：进程占用CPU的使用率</li>
+<li>%MEM：进程使用的物理内存和总内存的百分比</li>
+<li>TIME+：该进程启动后占用的总的CPU时间，即占用CPU使用时间的累加值。</li>
+<li>COMMAND：进程启动命令名称</li>
+</ul>
+<h3 id="交互操作指令"><a href="#交互操作指令" class="headerlink" title="交互操作指令"></a>交互操作指令</h3><ul>
+<li>键入<code>q</code>：退出</li>
+<li>键入<code>{space}</code>：立即刷新</li>
+<li>键入<code>s</code>：设置刷新时间间隔</li>
+<li>键入<code>c</code>：显示命令完全模式</li>
+<li>键入<code>t</code>：显示或隐藏进程和CPU状态信息</li>
+<li>键入<code>m</code>：显示或隐藏内存状态信息</li>
+<li>键入<code>l</code>：显示或隐藏uptime信息</li>
+<li>键入<code>f</code>：增加或减少进程显示标志</li>
+<li>键入<code>S</code>：累计模式，会把已完成或退出的子进程占用的CPU时间累计到父进程的MITE+</li>
+<li>键入<code>P</code>：按%CPU使用率排行</li>
+<li>键入<code>T</code>：按MITE+排行</li>
+<li>键入<code>M</code>：按%MEM排行</li>
+<li>键入<code>u</code>：指定显示用户进程</li>
+<li>键入<code>r</code>：修改进程renice值</li>
+<li>键入<code>kkill</code>：进程</li>
+<li>键入<code>i</code>：只显示正在运行的进程</li>
+<li>键入<code>W</code>：保存对top的设置到文件^/.toprc，下次启动将自动调用toprc文件的设置。</li>
+<li>键入<code>h</code>：帮助命令。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/05/16/arch-installation/" rel="prev" title="ArchLinux 安装">
+      <i class="fa fa-chevron-left"></i> ArchLinux 安装
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/01/linux-user-info/" rel="next" title="Linux用户信息详解">
+      Linux用户信息详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux命令-top"><span class="nav-number">1.</span> <span class="nav-text">Linux命令-top</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用法"><span class="nav-number">1.2.</span> <span class="nav-text">用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数解释"><span class="nav-number">1.2.1.</span> <span class="nav-text">参数解释</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#系统运行时间和平均负载"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">系统运行时间和平均负载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#任务和CPU状态"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">任务和CPU状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存使用情况"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">内存使用情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程信息"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">进程信息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#交互操作指令"><span class="nav-number">1.2.2.</span> <span class="nav-text">交互操作指令</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">zhangpu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">冀ICP备19032777 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhangpu-vp.cn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

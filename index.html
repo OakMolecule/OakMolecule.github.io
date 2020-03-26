@@ -147,7 +147,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/06/02/esp8266/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/26/Linux-C-Use-System-Cmd/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -161,7 +161,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2016/06/02/esp8266/" class="post-title-link" itemprop="url">esp8266</a>
+            <a href="/2020/03/26/Linux-C-Use-System-Cmd/" class="post-title-link" itemprop="url">在Linux C调用系统命令</a>
         </h2>
 
         <div class="post-meta">
@@ -172,7 +172,20 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2016-06-02 21:29:53 / 修改时间：21:31:13" itemprop="dateCreated datePublished" datetime="2016-06-02T21:29:53+08:00">2016-06-02</time>
+              <time title="创建时间：2020-03-26 15:42:16 / 修改时间：16:39:48" itemprop="dateCreated datePublished" datetime="2020-03-26T15:42:16+08:00">2020-03-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/C-C/" itemprop="url" rel="index"><span itemprop="name">C/C++</span></a>
+                </span>
             </span>
 
           
@@ -186,7 +199,473 @@
     <div class="post-body" itemprop="articleBody">
 
       
+          <h1 id="在Linux-C调用系统命令"><a href="#在Linux-C调用系统命令" class="headerlink" title="在Linux C调用系统命令"></a>在Linux C调用系统命令</h1><p>在开发中时不时会在代码中调用系统命令，Lnux中调用系统命令的方法比较多。是否需要获取命令的输出也需要考虑。</p>
+<h2 id="system"><a href="#system" class="headerlink" title="system"></a>system</h2><p>函数定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">int system(const char *command);</span><br></pre></td></tr></table></figure>
+<p>在其中会使用<code>fork()</code>调用<code>execl()</code>函数，最后执行函数</p>
+<h2 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h2><ul>
+<li>如果参数<code>command</code>为NULL，则在shell可用的情况下为非零值，在没有shell可用的情况下为0。</li>
+<li>如果无法<code>fork</code>子进程则返回-1，并且将errno设置为错误值。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/17/how-sudo-works/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhangpu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
           
+            <a href="/2019/12/17/how-sudo-works/" class="post-title-link" itemprop="url">sudo的工作原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-12-17 12:27:40" itemprop="dateCreated datePublished" datetime="2019-12-17T12:27:40+08:00">2019-12-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-26 15:50:11" itemprop="dateModified" datetime="2020-03-26T15:50:11+08:00">2020-03-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="sudo的工作原理"><a href="#sudo的工作原理" class="headerlink" title="sudo的工作原理"></a>sudo的工作原理</h1><p>此文不介绍sudoers文件的配置方法，只是简单介绍sudo工作流程。</p>
+<h2 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h2><p>工作流程如下图，第一次用markdown写流程图，不太精细。</p>
+<div id="flowchart-0" class="flow-chart"></div>
+
+<h2 id="认证文件简介"><a href="#认证文件简介" class="headerlink" title="认证文件简介"></a>认证文件简介</h2><p>认证文件可以理解为cookie，里面记录认证时间，在终端的PID，用户ID，终端的ttydev。<br>解析代码参考<a href="https://github.com/nongiach/sudo_inject/" target="_blank" rel="noopener" title="Github">Github</a>。<br>认证文件以二进制保存，每个用户会有一个自己的cookie文件，放在<code>/var/run/sudo/ts</code>文件夹下，文件名为用户名。<br>文件保存结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timestamp_entry_v1</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> short version;	<span class="comment">/* version number */</span></span><br><span class="line">    <span class="keyword">unsigned</span> short <span class="built_in">size</span>;	<span class="comment">/* entry size */</span></span><br><span class="line">    <span class="keyword">unsigned</span> short type;	<span class="comment">/* TS_GLOBAL, TS_TTY, TS_PPID */</span></span><br><span class="line">    <span class="keyword">unsigned</span> short flags;	<span class="comment">/* TS_DISABLED, TS_ANYUID */</span></span><br><span class="line">    <span class="keyword">uid_t</span> auth_uid;		<span class="comment">/* uid to authenticate as */</span></span><br><span class="line">    <span class="keyword">pid_t</span> sid;			<span class="comment">/* session ID associated with tty/ppid */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">ts</span>;</span>		<span class="comment">/* time stamp (CLOCK_MONOTONIC) */</span></span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">    <span class="keyword">dev_t</span> ttydev;		<span class="comment">/* tty device number */</span></span><br><span class="line">    <span class="keyword">pid_t</span> ppid;         <span class="comment">/* parent pid */</span></span><br><span class="line">    &#125; u;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timestamp_entry</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> short version;	<span class="comment">/* version number */</span></span><br><span class="line">    <span class="keyword">unsigned</span> short <span class="built_in">size</span>;	<span class="comment">/* entry size */</span></span><br><span class="line">    <span class="keyword">unsigned</span> short type;	<span class="comment">/* TS_GLOBAL, TS_TTY, TS_PPID */</span></span><br><span class="line">    <span class="keyword">unsigned</span> short flags;	<span class="comment">/* TS_DISABLED, TS_ANYUID */</span></span><br><span class="line">    <span class="keyword">uid_t</span> auth_uid;		<span class="comment">/* uid to authenticate as */</span></span><br><span class="line">    <span class="keyword">pid_t</span> sid;			<span class="comment">/* session ID associated with tty/ppid */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">start_time</span>;</span>	<span class="comment">/* session/ppid start time */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">ts</span>;</span>		<span class="comment">/* time stamp (CLOCK_MONOTONIC) */</span></span><br><span class="line">    <span class="keyword">union</span> &#123;</span><br><span class="line">	<span class="keyword">dev_t</span> ttydev;		<span class="comment">/* tty device number */</span></span><br><span class="line">	<span class="keyword">pid_t</span> ppid;		<span class="comment">/* parent pid */</span></span><br><span class="line">    &#125; u;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>有两种保存方式，通过<code>version</code>进行区分，当<code>version</code>值为1时使用上面的结构体；剩下的使用下面的结构体。<br><code>type</code>字段表示这下方的<code>union</code>中使用哪个字段，<code>type</code>会使用以下几个值：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TS_GLOBAL               0x01    <span class="comment">/* not restricted by tty or ppid */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TS_TTY                  0x02    <span class="comment">/* restricted by tty */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TS_PPID                 0x03    <span class="comment">/* restricted by ppid */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TS_LOCKEXCL             0x04    <span class="comment">/* special lock record */</span></span></span><br></pre></td></tr></table></figure>
+
+<p><code>flags</code>字段自行研究吧，没有太关注。<br><code>auth_uid</code>这个是授权用户的UID。<br><code>sid</code>这个表示所在终端的PID，但是这个有一个东西需要注意，如果这个账户是通过别的账户<code>su</code>过来的，那么他的值为最上层终端的PID，不太清楚原因。</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">st=>start: 用户执行sudo
+is_have_cookie=>condition: 检查/var/run/sudo/ts文件夹下是否有认证文件
+cookie_is_expire=>condition: 检查认证文件是否有效
+is_in_sudoers=>condition: 是否在/etc/sudoers文件中
+input_passwd=>operation: 输入密码
+op=>operation: 执行并返回结果
+e=>end: 退出
+st->is_have_cookie
+op->e
+input_passwd->is_in_sudoers
+is_have_cookie(yes)->cookie_is_expire
+is_have_cookie(no)->input_passwd
+cookie_is_expire(yes)->is_in_sudoers
+cookie_is_expire(no)->input_passwd
+is_in_sudoers(yes)->op
+is_in_sudoers(no)->e</textarea><textarea id="flowchart-0-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhangpu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/" class="post-title-link" itemprop="url">C/C++ const限定符</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-30 19:48:52" itemprop="dateCreated datePublished" datetime="2019-11-30T19:48:52+08:00">2019-11-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-26 14:59:04" itemprop="dateModified" datetime="2020-03-26T14:59:04+08:00">2020-03-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C-C/" itemprop="url" rel="index"><span itemprop="name">C/C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="C-C-const修饰符"><a href="#C-C-const修饰符" class="headerlink" title="C/C++ const修饰符"></a>C/C++ const修饰符</h1><p>写一篇简单点的，最近老是使用const，但是还经常想不起来咋用，老得查，写一篇记录以下，方便下次找。</p>
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>const说白了就是希望某些值不被改变，对于一般的变量来说很简单<code>const int i = 1</code>即可，但是对于指针来说就没那么简单了。</p>
+<h3 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h3><pre><code>const int *i = 0;      // 值不能改，指向可以随便改
+int *const j = 0;      // 值可以随便改，指向不能改
+const int *const k = 0;</code></pre><p>前两个很容易分不清楚，首先第一个是指向常量的指针，说人话就是<code>i</code>指向的值不能通过<code>*i</code>改变，但是可以通过别的方法改变，并且<code>i</code>这个指针可以随便指向其他变量。 第二个是常量指针，即指针不能随便指别人，但是指向的值可以随便改。 第三给就是都不嫩改了。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/01/linux-user-info/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhangpu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/01/linux-user-info/" class="post-title-link" itemprop="url">Linux用户信息详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-01 21:10:21" itemprop="dateCreated datePublished" datetime="2019-11-01T21:10:21+08:00">2019-11-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-26 15:39:43" itemprop="dateModified" datetime="2020-03-26T15:39:43+08:00">2020-03-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Linux用户信息详解"><a href="#Linux用户信息详解" class="headerlink" title="Linux用户信息详解"></a>Linux用户信息详解</h1><p>Linux用户信息很丰富，存储在了多个文件中，其中包括/etc/passwd，/etc/shadow，/var/log/wtmp等文件中，因为在项目中用到了，所以有些了解。下面对这几个文件进行一个详细的介绍。</p>
+<h2 id="账户基本信息"><a href="#账户基本信息" class="headerlink" title="账户基本信息"></a>账户基本信息</h2><h3 id="文件各字段含有"><a href="#文件各字段含有" class="headerlink" title="文件各字段含有"></a>文件各字段含有</h3><p><code>/etc/passwd</code>存储了账户的基本信息，默认任何用户都可以读取，也是早期存储账户密码的文件，后因任何用户都可读取，造成安全问题，故后期不再用于存储。<br><code>/etc/passwd</code>文件采用<code>:</code>分割，共分为了7个字段，下面是文件中的一行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:x:0:0:root:&#x2F;root:&#x2F;usr&#x2F;bin&#x2F;bash</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一列：用户名；</li>
+<li>第二列：为用户密码Flag，具体信息没有找到，根据个人推测是为了兼容早期版本，早期此字段用于存储用户密码，后期为了安全将密码放至<code>/etc/shadow</code>文件中。推测为了兼容，字段仍然保留。大部分用户此字段值为<code>x</code>，表示密码保存在<code>/etc/shadow</code>文件中，不是<code>x</code>则就是加密后的密码；</li>
+<li>第三列：用户ID，这个好理解，每个用户对应一个唯一的ID，就像身份证号一样；</li>
+<li>第四列：组ID，也就是用户所属组的ID了。Linux中每个用户只能在一个组中，但可以有多个附加组；</li>
+<li>第五列：用户的一些描述，可能是姓名等，可以为空；</li>
+<li>第六列：用户的Home目录，用于设置环境变量<code>$HOME</code>；</li>
+<li>第七列：用户的默认终端，如果用户被禁止登录了此字段为<code>/usr/bin/nologin</code>，只要登录就会得到<code>This account is currently not available.</code>的提示。</li>
+</ul>
+<h3 id="C-语言通过函数读取"><a href="#C-语言通过函数读取" class="headerlink" title="C 语言通过函数读取"></a>C 语言通过函数读取</h3><p>在头文件<code>pwd.h</code>中的函数可以获取到<code>/etc/passwd</code>文件中的账户信息。<br>在<code>pwd.h</code>中定义了结构体<code>passwd</code>，结构体内容如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">passwd</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_name;       <span class="comment">/* username */</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_passwd;     <span class="comment">/* user password */</span></span><br><span class="line">    <span class="keyword">uid_t</span>   pw_uid;        <span class="comment">/* user ID */</span></span><br><span class="line">    <span class="keyword">gid_t</span>   pw_gid;        <span class="comment">/* group ID */</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_gecos;      <span class="comment">/* user information */</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_dir;        <span class="comment">/* home directory */</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_shell;      <span class="comment">/* shell program */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>结构体中的内容与<code>/etc/passwd</code>文件中的内容对应，就不详细介绍了。<br>头文件中也定义了一些相关的函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct   passwd    *<span class="title">getpwuid</span><span class="params">(<span class="keyword">uid_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>                 <span class="title">getpwnam_r</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, struct passwd *, <span class="keyword">char</span> *, <span class="keyword">size_t</span>, struct passwd **)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>                 <span class="title">getpwuid_r</span><span class="params">(<span class="keyword">uid_t</span>, struct passwd *, <span class="keyword">char</span> *, <span class="keyword">size_t</span>, struct passwd **)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span>                <span class="title">endpwent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function">struct   passwd    *<span class="title">getpwent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span>                <span class="title">setpwent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>下面将介绍几个函数的作用：<br><code>getpwuid</code>通过UID查找用户信息，返回<code>passwd</code>的结构体；<br><code>getpwnam_r</code>和<code>getpwuid_r</code>不知道是做啥的。<br><code>setpwent</code>、<code>getpwent</code>和<code>endpwent</code>是一套函数，<code>getpwent</code>是用来获取一行数据，每调用一次读取指针就向下走一行，直至读完返回NULL，<code>setpwent</code>将读取指针返回文件头，<code>endpwent</code>将文件指针返回尾部。</p>
+<h2 id="账户密码信息"><a href="#账户密码信息" class="headerlink" title="账户密码信息"></a>账户密码信息</h2><h3 id="文件各字段含有-1"><a href="#文件各字段含有-1" class="headerlink" title="文件各字段含有"></a>文件各字段含有</h3><p><code>/etc/shadow</code>文件存储了账户的密码相关信息，内容还是很丰富的，与<code>passwd</code>相同，使用<code>:</code>分隔字段，<code>/etc/shadow</code>共分成了9个字段，其中一个为保留字段。<code>/etc/shadow</code>中储存了用户的密码，只用拥有root权限的用户才可以读写。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:$6$K9DgMAqih5hXEJgh$fK3s53mo&#x2F;YqeZe8v1NKuKHpUPdyuHjFT&#x2F;d9pM0u2xFxMVAOwjX51cCr5BEqmMaAoISd35PA&#x2F;cow1q.YoiOLTH0:18193:0:99999:7:::</span><br></pre></td></tr></table></figure>
+<p>上面就是<code>/etc/shadow</code>文件的一行，下面我将详细介绍各个字段的含义：</p>
+<ul>
+<li>第一列：用户名；</li>
+<li>第二列：加密后的密码，这里我的密码是1。貌似没有办法破解，但是可以通过字典的方式获得；<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">星号代表帐号被锁定，但是还是可以通过其他方式切换进去的，不同理解到底有啥用</span><br><span class="line">双叹号表示这个密码已经过期了。</span><br><span class="line">$6$ 开头的，表明是用SHA-512加密的，</span><br><span class="line">$1$ 表明是用MD5加密的</span><br><span class="line">$2$ 是用Blowfish加密的</span><br><span class="line">$5$ 是用SHA-256加密的。</span><br></pre></td></tr></table></figure></li>
+<li>第三列：账户最后一次修改密码的时间，是自1970年1月1日以来天数；</li>
+<li>第四列：自上次密码修改以来多少天内不能修改；</li>
+<li>第五列：口令保持有效的最大天数，自上次密码修改以来多少天之后必须修改密码的时间；</li>
+<li>第六列：警告时间，密码过期前几天提醒用户修改；</li>
+<li>第七列：密码无效期，自过期以来的数天之内，密码仍然有效；</li>
+<li>第八列：账户过期时间；</li>
+<li>第九列：保留字段。</li>
+</ul>
+<h3 id="C-语言通过函数读取-1"><a href="#C-语言通过函数读取-1" class="headerlink" title="C 语言通过函数读取"></a>C 语言通过函数读取</h3><p>在头文件<code>shadow.h</code>中的函数可以获取到<code>/etc/shadow</code>文件中的账户信息。<br>在<code>shadow.h</code>中定义了结构体<code>spwd</code>，结构体内容如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">spwd</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> *sp_namp;          <span class="comment">/* Login name */</span></span><br><span class="line">    <span class="keyword">char</span> *sp_pwdp;          <span class="comment">/* Encrypted password */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_lstchg;        <span class="comment">/* Date of last change</span></span><br><span class="line"><span class="comment">                               (measured in days since</span></span><br><span class="line"><span class="comment">                               1970-01-01 00:00:00 +0000 (UTC)) */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_min;           <span class="comment">/* Min # of days between changes */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_max;           <span class="comment">/* Max # of days between changes */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_warn;          <span class="comment">/* # of days before password expires</span></span><br><span class="line"><span class="comment">                               to warn user to change it */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_inact;         <span class="comment">/* # of days after password expires</span></span><br><span class="line"><span class="comment">                               until account is disabled */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_expire;        <span class="comment">/* Date when account expires</span></span><br><span class="line"><span class="comment">                               (measured in days since</span></span><br><span class="line"><span class="comment">                               1970-01-01 00:00:00 +0000 (UTC)) */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sp_flag;  <span class="comment">/* Reserved */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>结构体中的内容与<code>/etc/shadow</code>文件中的内容对应，就不详细介绍了。<br>头文件中也定义了一些相关的函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct spwd *<span class="title">getspnam</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br><span class="line"><span class="function">struct spwd *<span class="title">getspent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setspent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">endspent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function">struct spwd *<span class="title">fgetspent</span><span class="params">(FILE *stream)</span></span>;</span><br><span class="line"><span class="function">struct spwd *<span class="title">sgetspent</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *s)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">putspent</span><span class="params">(<span class="keyword">const</span> struct spwd *p, FILE *stream)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lckpwdf</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ulckpwdf</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>getspnam</code>函数返回一个指向结构的指针，该结构包含影子密码数据库中与用户名匹配的记录的细分字段。<br><code>getspent</code>函数返回一个指向影子密码数据库中下一个条目的指针。输入流中的位置由<code>setspent</code>初始化。完成阅读后，程序可以调用<code>endsend</code>，以便可以释放资源。<br><code>fgetspent</code>函数类似于<code>getspent</code>，但使用提供的流，而不是由<code>setpent</code>隐式打开的流。<br><code>sgetspent</code>函数将提供的字符串<code>s</code>解析为结构<code>spwd</code>。<br><code>putspent</code>函数以阴影密码文件格式将提供的<code>struct spwd * p</code>的内容作为文本行写入流中。值为NULL的字符串条目和值为-1的数字条目被写为空字符串。<br><code>lckpwdf</code>函数旨在防止影子密码数据库同时访问。它尝试获取锁，并在成功时返回0，或在失败时返回-1（在15秒内未获得锁）。<code>ulckpwdf</code>函数再次释放锁定。请注意，没有针对直接访问影子密码文件的保护措施。只有使用<code>lckpwdf</code>的程序才会注意到该锁定。</p>
+<h2 id="账户登录信息"><a href="#账户登录信息" class="headerlink" title="账户登录信息"></a>账户登录信息</h2><p>账户登录信息保存在<code>/var/log/wtmp</code>和<code>/var/log/btmp</code>文件中，这个文件是一二进制文件，直接通过<code>cat</code>打印，无过的有用信息，通过命令<code>last</code>可以获取登录，通过<code>lastb</code>可以获取未成功登录的信息。</p>
+<h3 id="C-语言通过函数读取-2"><a href="#C-语言通过函数读取-2" class="headerlink" title="C 语言通过函数读取"></a>C 语言通过函数读取</h3><p>同样C语言也可以获取此信息。在<code>utmp.h</code>文件中，定义了以下结构体吗，和一些常量：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">utmp</span> &#123;</span></span><br><span class="line">     <span class="keyword">char</span> ut_user[<span class="number">256</span>];             <span class="comment">/* User login name */</span></span><br><span class="line">     <span class="keyword">char</span> ut_id[<span class="number">14</span>];                <span class="comment">/* /etc/inittab id */</span></span><br><span class="line">     <span class="keyword">char</span> ut_line[<span class="number">64</span>];              <span class="comment">/* device name (console, lnxx) */</span></span><br><span class="line">     <span class="keyword">pid_t</span> ut_pid;                  <span class="comment">/* process id */</span></span><br><span class="line">     short ut_type;                 <span class="comment">/* type of entry */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !defined(__64BIT__)</span></span><br><span class="line">     <span class="keyword">int</span> __time_t_space;            <span class="comment">/* for 32vs64-bit time_t PPC */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">     <span class="keyword">time_t</span> ut_time;                <span class="comment">/* time entry was made */</span></span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">exit_status</span></span></span><br><span class="line"><span class="class">     &#123;</span></span><br><span class="line">          short e_termination;      <span class="comment">/* Process termination status */</span></span><br><span class="line">          short e_exit;             <span class="comment">/* Process exit status */</span></span><br><span class="line">     &#125;</span><br><span class="line">     ut_exit;                       <span class="comment">/* The exit status of a process</span></span><br><span class="line"><span class="comment">                                     * marked as DEAD_PROCESS.</span></span><br><span class="line"><span class="comment">                                     */</span></span><br><span class="line">     <span class="keyword">char</span> ut_host[<span class="number">256</span>];             <span class="comment">/* host name */</span></span><br><span class="line">     <span class="keyword">int</span> __dbl_word_pad;            <span class="comment">/* for double word alignment */</span></span><br><span class="line">     <span class="keyword">int</span> __reservedA[<span class="number">2</span>];</span><br><span class="line">     <span class="keyword">int</span> __reservedV[<span class="number">6</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EMPTY              0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RUN_LVL            1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BOOT_TIME          2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OLD_TIME           3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NEW_TIME           4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> INIT_PROCESS       5        <span class="comment">/* Process spawned by "init"                 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGIN_PROCESS      6        <span class="comment">/* A "getty" process                         */</span></span></span><br><span class="line"></span><br><span class="line">                                    <span class="comment">/* waitingforlogin                           */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> USER_PROCESS       7        <span class="comment">/* A user process                            */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEAD_PROCESS       8</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ACCOUNTING         9</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UTMAXTYPE ACCOUNTING        <span class="comment">/* Largest legal value                        */</span></span></span><br><span class="line">                                    <span class="comment">/* of ut_type                                 */</span></span><br></pre></td></tr></table></figure>
+<p>这个函数我也还有很多参数不了解，后面有机会再补上。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/01/linux-commond-top/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhangpu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/01/linux-commond-top/" class="post-title-link" itemprop="url">Linux命令-top</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-01 17:26:04" itemprop="dateCreated datePublished" datetime="2019-11-01T17:26:04+08:00">2019-11-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-26 15:34:40" itemprop="dateModified" datetime="2020-03-26T15:34:40+08:00">2020-03-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/Linux%E5%91%BD%E4%BB%A4/" itemprop="url" rel="index"><span itemprop="name">Linux命令</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Linux命令-top"><a href="#Linux命令-top" class="headerlink" title="Linux命令-top"></a>Linux命令-top</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>top相当于是Linux下的任务管理器，能够实时显示系统中各个进程的资源占用状况，MAN手册中的解释如下图。top是一个动态显示过程，即可以通过用户按键来不断刷新当前状态。<br><img src="/uploads/2019/10/image-1571465489845.png" alt="Linux MAN手册对top命令的描述"></p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><p>在终端输入<code>top</code>命令，即出现如下效果：<br><img src="/uploads/2019/10/image-1571465014787.png" alt="top命令运行效果"><br>使用<code>{q}</code>退出。</p>
+<h3 id="参数解释"><a href="#参数解释" class="headerlink" title="参数解释"></a>参数解释</h3><p><code>top</code>命令执行后主要由四个信息区域，从上至下分别表示了系统运行时间和平均负载、任务和CPU状态、内存使用情况以及进程相信信息。</p>
+<h4 id="系统运行时间和平均负载"><a href="#系统运行时间和平均负载" class="headerlink" title="系统运行时间和平均负载"></a>系统运行时间和平均负载</h4><p>系统运行时间和平均负载：</p>
+<ul>
+<li>第一行<ul>
+<li><code>14:03:03</code>：运行时间</li>
+<li><code>5:46</code>：系统开机到现在经过了多少时间</li>
+<li><code>4 users</code>：当前4个用户在线</li>
+<li><code>load average: 0.00, 0.01, 0.05</code>：最近1分钟、5分钟和15分钟的CPU负载信息</li>
+</ul>
+</li>
+</ul>
+<h4 id="任务和CPU状态"><a href="#任务和CPU状态" class="headerlink" title="任务和CPU状态"></a>任务和CPU状态</h4><p>任务和CPU状态由两行构成，显示了系统任务运行情况和CPU的状态</p>
+<ul>
+<li><p>第一行</p>
+<ul>
+<li><code>Tasks: 246 total</code>：总共有246个任务在运行</li>
+<li><code>2 running, 244 sleeping,   0 stopped,   0 zombie</code>：其中2个进程处于运行态，244个进程处于睡眠态（等待状态），0个进程停止，0个进程僵死</li>
+</ul>
+</li>
+<li><p>第二行展示了两次刷新间各类应用占用CPU时间的百分比</p>
+<ul>
+<li><code>1.7 us</code>：用户态进程的时间</li>
+<li><code>4.4 sy</code>：运行内核进程的时间</li>
+<li><code>0.0 ni</code>：运行良好的用户进程的时间</li>
+<li><code>93.7 id</code>：CPU空闲的时间</li>
+<li><code>0.1 wa</code>：等待I/O完成的时间</li>
+<li><code>0.0 hi</code>：硬件中断花费的时间</li>
+<li><code>0.1 si</code>：软中断花费的时间</li>
+<li><code>0.0 st</code>：虚拟机占用的时间</li>
+</ul>
+</li>
+</ul>
+<h4 id="内存使用情况"><a href="#内存使用情况" class="headerlink" title="内存使用情况"></a>内存使用情况</h4><p>内存使用情况由两行构成，描述了物理内存及虚拟内存的使用情况</p>
+<ul>
+<li><p>第一行，描述了物理内存的情况</p>
+<ul>
+<li><code>4026224 total</code>：内存总数</li>
+<li><code>2080500 freel</code>：空闲（可用）内存空间</li>
+<li><code>1021168 usedl</code>：已用内存</li>
+<li><code>924556 buff/cache</code>：用作内核缓存的内存量</li>
+</ul>
+</li>
+<li><p>第二行，描述了虚拟内存的情况</p>
+<ul>
+<li><code>4063228 total</code>：虚拟内存总数</li>
+<li><code>4063228 free</code>：空闲（可用）虚拟内存空间</li>
+<li><code>0 used</code>：已用虚拟内存</li>
+<li><code>2747656 avail Mem</code>：</li>
+</ul>
+</li>
+</ul>
+<p>其中单位换算方式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">KiB &#x3D; kibibyte &#x3D; 1024 bytes</span><br><span class="line">MiB &#x3D; mebibyte &#x3D; 1024 KiB &#x3D; 1,048,576 bytes</span><br><span class="line">GiB &#x3D; gibibyte &#x3D; 1024 MiB &#x3D; 1,073,741,824 bytes</span><br><span class="line">TiB &#x3D; tebibyte &#x3D; 1024 GiB &#x3D; 1,099,511,627,776 bytes</span><br><span class="line">PiB &#x3D; pebibyte &#x3D; 1024 TiB &#x3D; 1,125,899,906,842,624 bytes</span><br><span class="line">EiB &#x3D; exbibyte &#x3D; 1024 PiB &#x3D; 1,152,921,504,606,846,976 bytes</span><br></pre></td></tr></table></figure>
+
+<h4 id="进程信息"><a href="#进程信息" class="headerlink" title="进程信息"></a>进程信息</h4><p>进程信息详细列出了进程的相关情况</p>
+<ul>
+<li>PID：进程的ID</li>
+<li>USER：进程所有者</li>
+<li>PR：进程的优先级别，越小越优先被执行</li>
+<li>NInice：值</li>
+<li>VIRT：进程占用的虚拟内存</li>
+<li>RES：进程占用的物理内存</li>
+<li>SHR：进程使用的共享内存</li>
+<li>S：进程的状态。S表示休眠，R表示正在运行，Z表示僵死状态，N表示该进程优先值为负数</li>
+<li>%CPU：进程占用CPU的使用率</li>
+<li>%MEM：进程使用的物理内存和总内存的百分比</li>
+<li>TIME+：该进程启动后占用的总的CPU时间，即占用CPU使用时间的累加值。</li>
+<li>COMMAND：进程启动命令名称</li>
+</ul>
+<h3 id="交互操作指令"><a href="#交互操作指令" class="headerlink" title="交互操作指令"></a>交互操作指令</h3><ul>
+<li>键入<code>q</code>：退出</li>
+<li>键入<code>{space}</code>：立即刷新</li>
+<li>键入<code>s</code>：设置刷新时间间隔</li>
+<li>键入<code>c</code>：显示命令完全模式</li>
+<li>键入<code>t</code>：显示或隐藏进程和CPU状态信息</li>
+<li>键入<code>m</code>：显示或隐藏内存状态信息</li>
+<li>键入<code>l</code>：显示或隐藏uptime信息</li>
+<li>键入<code>f</code>：增加或减少进程显示标志</li>
+<li>键入<code>S</code>：累计模式，会把已完成或退出的子进程占用的CPU时间累计到父进程的MITE+</li>
+<li>键入<code>P</code>：按%CPU使用率排行</li>
+<li>键入<code>T</code>：按MITE+排行</li>
+<li>键入<code>M</code>：按%MEM排行</li>
+<li>键入<code>u</code>：指定显示用户进程</li>
+<li>键入<code>r</code>：修改进程renice值</li>
+<li>键入<code>kkill</code>：进程</li>
+<li>键入<code>i</code>：只显示正在运行的进程</li>
+<li>键入<code>W</code>：保存对top的设置到文件^/.toprc，下次启动将自动调用toprc文件的设置。</li>
+<li>键入<code>h</code>：帮助命令。</li>
+</ul>
+
       
     </div>
 
@@ -403,9 +882,17 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">日志</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
       </div>
   </nav>
 </div>
@@ -427,6 +914,8 @@
         
 
         
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">冀ICP备19032777 </a>
+  </div>
 
 <div class="copyright">
   
@@ -435,7 +924,7 @@
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">zhangpu</span>
+  <span class="author" itemprop="copyrightHolder">zhangpu-vp.cn</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

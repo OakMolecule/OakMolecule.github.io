@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Linux用户信息详解Linux用户信息很丰富，存储在了多个文件中，其中包括&#x2F;etc&#x2F;passwd，&#x2F;etc&#x2F;shadow，&#x2F;var&#x2F;log&#x2F;wtmp等文件中，因为在项目中用到了，所以有些了解。下面对这几个文件进行一个详细的介绍。 账户基本信息文件各字段含有&#x2F;etc&#x2F;passwd存储了账户的基本信息，默认任何用户都可以读取，也是早期存储账户密码的文件，后因任何用户都可读取，造成安全问题，故后期不再">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux用户信息详解">
+<meta property="og:url" content="http://yoursite.com/2019/11/01/linux-user-info/index.html">
+<meta property="og:site_name" content="Oak">
+<meta property="og:description" content="Linux用户信息详解Linux用户信息很丰富，存储在了多个文件中，其中包括&#x2F;etc&#x2F;passwd，&#x2F;etc&#x2F;shadow，&#x2F;var&#x2F;log&#x2F;wtmp等文件中，因为在项目中用到了，所以有些了解。下面对这几个文件进行一个详细的介绍。 账户基本信息文件各字段含有&#x2F;etc&#x2F;passwd存储了账户的基本信息，默认任何用户都可以读取，也是早期存储账户密码的文件，后因任何用户都可读取，造成安全问题，故后期不再">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-11-01T13:10:21.000Z">
+<meta property="article:modified_time" content="2020-03-26T07:39:43.342Z">
+<meta property="article:author" content="zhangpu">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/11/01/linux-user-info/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Linux用户信息详解 | Oak</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Oak</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/01/linux-user-info/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhangpu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux用户信息详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-01 21:10:21" itemprop="dateCreated datePublished" datetime="2019-11-01T21:10:21+08:00">2019-11-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-26 15:39:43" itemprop="dateModified" datetime="2020-03-26T15:39:43+08:00">2020-03-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Linux用户信息详解"><a href="#Linux用户信息详解" class="headerlink" title="Linux用户信息详解"></a>Linux用户信息详解</h1><p>Linux用户信息很丰富，存储在了多个文件中，其中包括/etc/passwd，/etc/shadow，/var/log/wtmp等文件中，因为在项目中用到了，所以有些了解。下面对这几个文件进行一个详细的介绍。</p>
+<h2 id="账户基本信息"><a href="#账户基本信息" class="headerlink" title="账户基本信息"></a>账户基本信息</h2><h3 id="文件各字段含有"><a href="#文件各字段含有" class="headerlink" title="文件各字段含有"></a>文件各字段含有</h3><p><code>/etc/passwd</code>存储了账户的基本信息，默认任何用户都可以读取，也是早期存储账户密码的文件，后因任何用户都可读取，造成安全问题，故后期不再用于存储。<br><code>/etc/passwd</code>文件采用<code>:</code>分割，共分为了7个字段，下面是文件中的一行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:x:0:0:root:&#x2F;root:&#x2F;usr&#x2F;bin&#x2F;bash</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一列：用户名；</li>
+<li>第二列：为用户密码Flag，具体信息没有找到，根据个人推测是为了兼容早期版本，早期此字段用于存储用户密码，后期为了安全将密码放至<code>/etc/shadow</code>文件中。推测为了兼容，字段仍然保留。大部分用户此字段值为<code>x</code>，表示密码保存在<code>/etc/shadow</code>文件中，不是<code>x</code>则就是加密后的密码；</li>
+<li>第三列：用户ID，这个好理解，每个用户对应一个唯一的ID，就像身份证号一样；</li>
+<li>第四列：组ID，也就是用户所属组的ID了。Linux中每个用户只能在一个组中，但可以有多个附加组；</li>
+<li>第五列：用户的一些描述，可能是姓名等，可以为空；</li>
+<li>第六列：用户的Home目录，用于设置环境变量<code>$HOME</code>；</li>
+<li>第七列：用户的默认终端，如果用户被禁止登录了此字段为<code>/usr/bin/nologin</code>，只要登录就会得到<code>This account is currently not available.</code>的提示。</li>
+</ul>
+<h3 id="C-语言通过函数读取"><a href="#C-语言通过函数读取" class="headerlink" title="C 语言通过函数读取"></a>C 语言通过函数读取</h3><p>在头文件<code>pwd.h</code>中的函数可以获取到<code>/etc/passwd</code>文件中的账户信息。<br>在<code>pwd.h</code>中定义了结构体<code>passwd</code>，结构体内容如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">passwd</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_name;       <span class="comment">/* username */</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_passwd;     <span class="comment">/* user password */</span></span><br><span class="line">    <span class="keyword">uid_t</span>   pw_uid;        <span class="comment">/* user ID */</span></span><br><span class="line">    <span class="keyword">gid_t</span>   pw_gid;        <span class="comment">/* group ID */</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_gecos;      <span class="comment">/* user information */</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_dir;        <span class="comment">/* home directory */</span></span><br><span class="line">    <span class="keyword">char</span>   *pw_shell;      <span class="comment">/* shell program */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>结构体中的内容与<code>/etc/passwd</code>文件中的内容对应，就不详细介绍了。<br>头文件中也定义了一些相关的函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct   passwd    *<span class="title">getpwuid</span><span class="params">(<span class="keyword">uid_t</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>                 <span class="title">getpwnam_r</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *, struct passwd *, <span class="keyword">char</span> *, <span class="keyword">size_t</span>, struct passwd **)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span>                 <span class="title">getpwuid_r</span><span class="params">(<span class="keyword">uid_t</span>, struct passwd *, <span class="keyword">char</span> *, <span class="keyword">size_t</span>, struct passwd **)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span>                <span class="title">endpwent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function">struct   passwd    *<span class="title">getpwent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span>                <span class="title">setpwent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>下面将介绍几个函数的作用：<br><code>getpwuid</code>通过UID查找用户信息，返回<code>passwd</code>的结构体；<br><code>getpwnam_r</code>和<code>getpwuid_r</code>不知道是做啥的。<br><code>setpwent</code>、<code>getpwent</code>和<code>endpwent</code>是一套函数，<code>getpwent</code>是用来获取一行数据，每调用一次读取指针就向下走一行，直至读完返回NULL，<code>setpwent</code>将读取指针返回文件头，<code>endpwent</code>将文件指针返回尾部。</p>
+<h2 id="账户密码信息"><a href="#账户密码信息" class="headerlink" title="账户密码信息"></a>账户密码信息</h2><h3 id="文件各字段含有-1"><a href="#文件各字段含有-1" class="headerlink" title="文件各字段含有"></a>文件各字段含有</h3><p><code>/etc/shadow</code>文件存储了账户的密码相关信息，内容还是很丰富的，与<code>passwd</code>相同，使用<code>:</code>分隔字段，<code>/etc/shadow</code>共分成了9个字段，其中一个为保留字段。<code>/etc/shadow</code>中储存了用户的密码，只用拥有root权限的用户才可以读写。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root:$6$K9DgMAqih5hXEJgh$fK3s53mo&#x2F;YqeZe8v1NKuKHpUPdyuHjFT&#x2F;d9pM0u2xFxMVAOwjX51cCr5BEqmMaAoISd35PA&#x2F;cow1q.YoiOLTH0:18193:0:99999:7:::</span><br></pre></td></tr></table></figure>
+<p>上面就是<code>/etc/shadow</code>文件的一行，下面我将详细介绍各个字段的含义：</p>
+<ul>
+<li>第一列：用户名；</li>
+<li>第二列：加密后的密码，这里我的密码是1。貌似没有办法破解，但是可以通过字典的方式获得；<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">星号代表帐号被锁定，但是还是可以通过其他方式切换进去的，不同理解到底有啥用</span><br><span class="line">双叹号表示这个密码已经过期了。</span><br><span class="line">$6$ 开头的，表明是用SHA-512加密的，</span><br><span class="line">$1$ 表明是用MD5加密的</span><br><span class="line">$2$ 是用Blowfish加密的</span><br><span class="line">$5$ 是用SHA-256加密的。</span><br></pre></td></tr></table></figure></li>
+<li>第三列：账户最后一次修改密码的时间，是自1970年1月1日以来天数；</li>
+<li>第四列：自上次密码修改以来多少天内不能修改；</li>
+<li>第五列：口令保持有效的最大天数，自上次密码修改以来多少天之后必须修改密码的时间；</li>
+<li>第六列：警告时间，密码过期前几天提醒用户修改；</li>
+<li>第七列：密码无效期，自过期以来的数天之内，密码仍然有效；</li>
+<li>第八列：账户过期时间；</li>
+<li>第九列：保留字段。</li>
+</ul>
+<h3 id="C-语言通过函数读取-1"><a href="#C-语言通过函数读取-1" class="headerlink" title="C 语言通过函数读取"></a>C 语言通过函数读取</h3><p>在头文件<code>shadow.h</code>中的函数可以获取到<code>/etc/shadow</code>文件中的账户信息。<br>在<code>shadow.h</code>中定义了结构体<code>spwd</code>，结构体内容如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">spwd</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> *sp_namp;          <span class="comment">/* Login name */</span></span><br><span class="line">    <span class="keyword">char</span> *sp_pwdp;          <span class="comment">/* Encrypted password */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_lstchg;        <span class="comment">/* Date of last change</span></span><br><span class="line"><span class="comment">                               (measured in days since</span></span><br><span class="line"><span class="comment">                               1970-01-01 00:00:00 +0000 (UTC)) */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_min;           <span class="comment">/* Min # of days between changes */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_max;           <span class="comment">/* Max # of days between changes */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_warn;          <span class="comment">/* # of days before password expires</span></span><br><span class="line"><span class="comment">                               to warn user to change it */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_inact;         <span class="comment">/* # of days after password expires</span></span><br><span class="line"><span class="comment">                               until account is disabled */</span></span><br><span class="line">    <span class="keyword">long</span>  sp_expire;        <span class="comment">/* Date when account expires</span></span><br><span class="line"><span class="comment">                               (measured in days since</span></span><br><span class="line"><span class="comment">                               1970-01-01 00:00:00 +0000 (UTC)) */</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sp_flag;  <span class="comment">/* Reserved */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>结构体中的内容与<code>/etc/shadow</code>文件中的内容对应，就不详细介绍了。<br>头文件中也定义了一些相关的函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct spwd *<span class="title">getspnam</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *name)</span></span>;</span><br><span class="line"><span class="function">struct spwd *<span class="title">getspent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setspent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">endspent</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function">struct spwd *<span class="title">fgetspent</span><span class="params">(FILE *stream)</span></span>;</span><br><span class="line"><span class="function">struct spwd *<span class="title">sgetspent</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *s)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">putspent</span><span class="params">(<span class="keyword">const</span> struct spwd *p, FILE *stream)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lckpwdf</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ulckpwdf</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>getspnam</code>函数返回一个指向结构的指针，该结构包含影子密码数据库中与用户名匹配的记录的细分字段。<br><code>getspent</code>函数返回一个指向影子密码数据库中下一个条目的指针。输入流中的位置由<code>setspent</code>初始化。完成阅读后，程序可以调用<code>endsend</code>，以便可以释放资源。<br><code>fgetspent</code>函数类似于<code>getspent</code>，但使用提供的流，而不是由<code>setpent</code>隐式打开的流。<br><code>sgetspent</code>函数将提供的字符串<code>s</code>解析为结构<code>spwd</code>。<br><code>putspent</code>函数以阴影密码文件格式将提供的<code>struct spwd * p</code>的内容作为文本行写入流中。值为NULL的字符串条目和值为-1的数字条目被写为空字符串。<br><code>lckpwdf</code>函数旨在防止影子密码数据库同时访问。它尝试获取锁，并在成功时返回0，或在失败时返回-1（在15秒内未获得锁）。<code>ulckpwdf</code>函数再次释放锁定。请注意，没有针对直接访问影子密码文件的保护措施。只有使用<code>lckpwdf</code>的程序才会注意到该锁定。</p>
+<h2 id="账户登录信息"><a href="#账户登录信息" class="headerlink" title="账户登录信息"></a>账户登录信息</h2><p>账户登录信息保存在<code>/var/log/wtmp</code>和<code>/var/log/btmp</code>文件中，这个文件是一二进制文件，直接通过<code>cat</code>打印，无过的有用信息，通过命令<code>last</code>可以获取登录，通过<code>lastb</code>可以获取未成功登录的信息。</p>
+<h3 id="C-语言通过函数读取-2"><a href="#C-语言通过函数读取-2" class="headerlink" title="C 语言通过函数读取"></a>C 语言通过函数读取</h3><p>同样C语言也可以获取此信息。在<code>utmp.h</code>文件中，定义了以下结构体吗，和一些常量：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">utmp</span> &#123;</span></span><br><span class="line">     <span class="keyword">char</span> ut_user[<span class="number">256</span>];             <span class="comment">/* User login name */</span></span><br><span class="line">     <span class="keyword">char</span> ut_id[<span class="number">14</span>];                <span class="comment">/* /etc/inittab id */</span></span><br><span class="line">     <span class="keyword">char</span> ut_line[<span class="number">64</span>];              <span class="comment">/* device name (console, lnxx) */</span></span><br><span class="line">     <span class="keyword">pid_t</span> ut_pid;                  <span class="comment">/* process id */</span></span><br><span class="line">     short ut_type;                 <span class="comment">/* type of entry */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !defined(__64BIT__)</span></span><br><span class="line">     <span class="keyword">int</span> __time_t_space;            <span class="comment">/* for 32vs64-bit time_t PPC */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">     <span class="keyword">time_t</span> ut_time;                <span class="comment">/* time entry was made */</span></span><br><span class="line">     <span class="class"><span class="keyword">struct</span> <span class="title">exit_status</span></span></span><br><span class="line"><span class="class">     &#123;</span></span><br><span class="line">          short e_termination;      <span class="comment">/* Process termination status */</span></span><br><span class="line">          short e_exit;             <span class="comment">/* Process exit status */</span></span><br><span class="line">     &#125;</span><br><span class="line">     ut_exit;                       <span class="comment">/* The exit status of a process</span></span><br><span class="line"><span class="comment">                                     * marked as DEAD_PROCESS.</span></span><br><span class="line"><span class="comment">                                     */</span></span><br><span class="line">     <span class="keyword">char</span> ut_host[<span class="number">256</span>];             <span class="comment">/* host name */</span></span><br><span class="line">     <span class="keyword">int</span> __dbl_word_pad;            <span class="comment">/* for double word alignment */</span></span><br><span class="line">     <span class="keyword">int</span> __reservedA[<span class="number">2</span>];</span><br><span class="line">     <span class="keyword">int</span> __reservedV[<span class="number">6</span>];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EMPTY              0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RUN_LVL            1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BOOT_TIME          2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> OLD_TIME           3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NEW_TIME           4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> INIT_PROCESS       5        <span class="comment">/* Process spawned by "init"                 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOGIN_PROCESS      6        <span class="comment">/* A "getty" process                         */</span></span></span><br><span class="line"></span><br><span class="line">                                    <span class="comment">/* waitingforlogin                           */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> USER_PROCESS       7        <span class="comment">/* A user process                            */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEAD_PROCESS       8</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ACCOUNTING         9</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UTMAXTYPE ACCOUNTING        <span class="comment">/* Largest legal value                        */</span></span></span><br><span class="line">                                    <span class="comment">/* of ut_type                                 */</span></span><br></pre></td></tr></table></figure>
+<p>这个函数我也还有很多参数不了解，后面有机会再补上。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/01/linux-commond-top/" rel="prev" title="Linux命令-top">
+      <i class="fa fa-chevron-left"></i> Linux命令-top
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/" rel="next" title="C/C++ const限定符">
+      C/C++ const限定符 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux用户信息详解"><span class="nav-number">1.</span> <span class="nav-text">Linux用户信息详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#账户基本信息"><span class="nav-number">1.1.</span> <span class="nav-text">账户基本信息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件各字段含有"><span class="nav-number">1.1.1.</span> <span class="nav-text">文件各字段含有</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-语言通过函数读取"><span class="nav-number">1.1.2.</span> <span class="nav-text">C 语言通过函数读取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#账户密码信息"><span class="nav-number">1.2.</span> <span class="nav-text">账户密码信息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件各字段含有-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">文件各字段含有</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-语言通过函数读取-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">C 语言通过函数读取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#账户登录信息"><span class="nav-number">1.3.</span> <span class="nav-text">账户登录信息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#C-语言通过函数读取-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">C 语言通过函数读取</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">zhangpu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">冀ICP备19032777 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhangpu-vp.cn</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
