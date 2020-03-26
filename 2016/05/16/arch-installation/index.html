@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="上路初识Arch寒假闲的作死，非要在装了linux的机子上重装一遍windows，作死搞废GRUB引导，在张大师的博客引导下初识Arch，配置了一天脑子都快炸了，最后在临睡觉前搞好了。前两天没地方呆，各处实验室用不了，闲的无聊，无奈之下，装了个virtualbox虚拟机，奋斗三天，装崩数次，最终装上，虽说用了不超过一小时，又雪崩了吧，好歹成功一回。Arch并不太懂，官方介绍献上Arch Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ArchLinux 安装">
+<meta property="og:url" content="http://yoursite.com/2016/05/16/arch-installation/index.html">
+<meta property="og:site_name" content="Oak">
+<meta property="og:description" content="上路初识Arch寒假闲的作死，非要在装了linux的机子上重装一遍windows，作死搞废GRUB引导，在张大师的博客引导下初识Arch，配置了一天脑子都快炸了，最后在临睡觉前搞好了。前两天没地方呆，各处实验室用不了，闲的无聊，无奈之下，装了个virtualbox虚拟机，奋斗三天，装崩数次，最终装上，虽说用了不超过一小时，又雪崩了吧，好歹成功一回。Arch并不太懂，官方介绍献上Arch Linux">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/uploads/Arch%E5%AE%89%E8%A3%85%E9%80%89%E6%8B%A9%E7%95%8C%E9%9D%A2.JPG">
+<meta property="og:image" content="http://yoursite.com/uploads/%E5%AE%89%E8%A3%85%E5%A5%BD%E5%90%8E%E7%9A%84Arch.JPG">
+<meta property="article:published_time" content="2016-05-16T06:37:06.000Z">
+<meta property="article:modified_time" content="2016-05-19T07:06:16.440Z">
+<meta property="article:author" content="zhangpu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/uploads/Arch%E5%AE%89%E8%A3%85%E9%80%89%E6%8B%A9%E7%95%8C%E9%9D%A2.JPG">
+
+<link rel="canonical" href="http://yoursite.com/2016/05/16/arch-installation/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ArchLinux 安装 | Oak</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Oak</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/16/arch-installation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhangpu">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ArchLinux 安装
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-05-16 14:37:06" itemprop="dateCreated datePublished" datetime="2016-05-16T14:37:06+08:00">2016-05-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2016-05-19 15:06:16" itemprop="dateModified" datetime="2016-05-19T15:06:16+08:00">2016-05-19</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="上路"><a href="#上路" class="headerlink" title="上路"></a>上路</h2><h3 id="初识Arch"><a href="#初识Arch" class="headerlink" title="初识Arch"></a>初识Arch</h3><p>寒假闲的作死，非要在装了linux的机子上重装一遍windows，作死搞废GRUB引导，在<a href="https://blog.yoitsu.moe/" target="_blank" rel="noopener">张大师的博客</a>引导下初识Arch，配置了一天脑子都快炸了，最后在临睡觉前搞好了。<br>前两天没地方呆，各处实验室用不了，闲的无聊，无奈之下，装了个<a href="https://www.virtualbox.org/" target="_blank" rel="noopener">virtualbox</a>虚拟机，奋斗三天，装崩数次，最终装上，虽说用了不超过一小时，又雪崩了吧，好歹成功一回。<br>Arch并不太懂，官方介绍献上<a href="https://wiki.archlinux.org/index.php/Arch_Linux_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)" target="_blank" rel="noopener">Arch Linux (简体中文)</a>，当然英文好的还是建议看英文的（像我的这种英文渣……），英文文档也献上了<a href="https://wiki.archlinux.org/index.php/Arch_Linux" target="_blank" rel="noopener">Arch Linux</a></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>初次安装在虚拟机，主要怕把原来的系统搞废了，资料搞丢了。</p>
+<h3 id="镜像源下载"><a href="#镜像源下载" class="headerlink" title="镜像源下载"></a>镜像源下载</h3><p>这个也不多说了Arch官网下一个啦，越新越好的了。</p>
+<h3 id="镜像烧录"><a href="#镜像烧录" class="headerlink" title="镜像烧录"></a>镜像烧录</h3><p>虚拟机安装就不要考虑烧录U盘的问题了（貌似简单了不少）。不过要说一句虚拟机的配置，理论上，Arch Linux能在任何内存空间不小于 256MB 的i686兼容机上运行。最基本的base组中包含的包将占用约 800MB 存储空间。</p>
+<h3 id="安装开始"><a href="#安装开始" class="headerlink" title="安装开始"></a>安装开始</h3><p>小白兔照着官方文档装第一次八成是失败，而且装的脑袋都要炸了。本人英语水平有限所以只能看中文的了<a href="https://wiki.archlinux.org/index.php/Beginners%27_guide_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)" target="_blank" rel="noopener">Beginners’ guide (简体中文)</a>，英语好的还是建议看英文的<a href="https://wiki.archlinux.org/index.php/Beginners%27_guide" target="_blank" rel="noopener">Beginners’ guide</a>。<br>下面就说正题了，安装：<br>把镜像挂载到虚拟机上，点击绿色的向右按钮就算是开机了。开机默认进入Arch的镜像安装界面，<img src="/uploads/Arch%E5%AE%89%E8%A3%85%E9%80%89%E6%8B%A9%E7%95%8C%E9%9D%A2.JPG" alt="Arch安装选择界面">选择第一个就好了。</p>
+<h4 id="连接到因特网"><a href="#连接到因特网" class="headerlink" title="连接到因特网"></a>连接到因特网</h4><p>连接网络，这个就不要管了，虚拟机外面上上网了就不用担心了，所以此步骤跳过。</p>
+<h4 id="更新系统时间"><a href="#更新系统时间" class="headerlink" title="更新系统时间"></a>更新系统时间</h4><p>敲一遍命令就好了</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># timedatectl set-ntp true</span></span><br></pre></td></tr></table></figure>
+<p>无返回。<br>然后就是识别设备，分区，格式化分区</p>
+<h4 id="识别设备"><a href="#识别设备" class="headerlink" title="识别设备"></a>识别设备</h4><p>首先要确定系统安装的目标设备，下面命令会显示所有连接到系统的设备和分区状况：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lsblk</span></span><br></pre></td></tr></table></figure>
+<p>最少会有两个硬盘，一个是镜像盘，另一个是虚拟机虚拟的硬盘，硬盘大小看你虚拟机虚拟的大小啦。</p>
+<h4 id="创建新分区表"><a href="#创建新分区表" class="headerlink" title="创建新分区表"></a>创建新分区表</h4><p>虚拟机没有使用，自然没有分区了，所以一定要分区的（x按照虚拟机的情况去改就好了）：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># parted /dev/sdx</span></span><br></pre></td></tr></table></figure>
+<p>为 BIOS 系统创建 MBR/msdos 分区表（这个不用想了，virtualbox虚拟机只支持msdos分区，所以直接敲命令就好了）：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(parted) mklabel msdos</span><br></pre></td></tr></table></figure>
+<h4 id="用-parted-进行分区"><a href="#用-parted-进行分区" class="headerlink" title="用 parted 进行分区"></a>用 parted 进行分区</h4><p>因为是虚拟机，而且linux要求把可执行文件放在home文件下，所以只分了一个区：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(parted) mkpart primary ext4 1M 100%</span><br></pre></td></tr></table></figure>
+<p>退出parted</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(parted) quit</span><br></pre></td></tr></table></figure>
+<h4 id="格式化文件系统"><a href="#格式化文件系统" class="headerlink" title="格式化文件系统"></a>格式化文件系统</h4><p>先查看所有分区：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># lsblk /dev/sdx</span></span><br></pre></td></tr></table></figure>
+<p>建议用 ext4 文件系统格式化分区（就一个分区，不要想了sda1就行了）：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mkfs.ext4 /dev/sdx1</span></span><br></pre></td></tr></table></figure>
+<p>然后就是挂载</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># mount /dev/sdx1 /mnt</span></span><br></pre></td></tr></table></figure>
+<h4 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h4><p>选择安装镜像<br>编辑文件 /etc/pacman.d/mirrorlist<br>官方不知道为何使用中科大的镜像源，163的速度比较快，但是据说费流量，中科大的貌似最近学校限制出口速度，所以选择哪个镜像源自己看自家网络情况定了。</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nano /etc/pacman.d/mirrorlist</span></span><br><span class="line">---------------------------------------</span><br><span class="line">Server = http://mirrors.ustc.edu.cn/archlinux/<span class="variable">$repo</span>/os/<span class="variable">$arch</span></span><br></pre></td></tr></table></figure>
+<p>留下上面那行，剩下全部删了就好了。<br>这个留的是中科大的，163的看见里面有163的就是163的镜像站了。<br>更改镜像列表后请务必使用命令强制刷新，命令如下：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pacman -Syy</span></span><br></pre></td></tr></table></figure>
+<p>当年因为这个细节崩了数次，说出来都是泪啊</p>
+<h4 id="安装基本软件包"><a href="#安装基本软件包" class="headerlink" title="安装基本软件包"></a>安装基本软件包</h4><p>没啥好说的了，直接上命令：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pacstrap -i /mnt base base-devel</span></span><br></pre></td></tr></table></figure>
+<h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><h5 id="fstab"><a href="#fstab" class="headerlink" title="fstab"></a>fstab</h5><p>用以下命令生成 fstab. 之所以用 UUID 是因为它们能唯一且独立地标识（具体是嘛我也不懂，照着输嘛）：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># genfstab -U -p /mnt &gt; /mnt/etc/fstab</span></span><br></pre></td></tr></table></figure>
+<p><em>强烈建议</em> 在执行完以上命令后，后检查一下生成的 /mnt/etc/fstab 文件是否正确。若在运行 genfstab 或是之后发生错误，后续修改请直接手动编辑 fstab 文件。装了几次，没遇上过问题（官网上说的跟我能看懂似的）。</p>
+<h5 id="chroot"><a href="#chroot" class="headerlink" title="chroot"></a>chroot</h5><p>说实话这个是嘛我也不知道，总之不照着输后头就是错（对了，前面务必别忘了挂载，之前干了不知道多少回这个事情了）</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># arch-chroot /mnt /bin/bash</span></span><br></pre></td></tr></table></figure>
+<h5 id="Locale"><a href="#Locale" class="headerlink" title="Locale"></a>Locale</h5><p>本地化的程序与库若要本地化文本，都依赖 Locale, 后者明确规定地域、货币、时区日期的格式、字符排列方式和其他本地化标准等等。在下面两个文件设置：locale.gen 与 locale.conf.<br>/etc/locale.gen是一个仅包含注释文档的文本文件。指定您需要的本地化类型，只需移除对应行前面的注释符号（＃）即可，建议选择帶UTF-8的项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nano /etc/locale.gen</span></span><br><span class="line">---------------------------------------</span><br><span class="line">en_US.UTF-8 UTF-8</span><br><span class="line">zh_CN.UTF-8 UTF-8</span><br><span class="line">zh_TW.UTF-8 UTF-8</span><br></pre></td></tr></table></figure>
+<p>接着执行locale-gen以生成locale讯息：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># locale-gen</span></span><br></pre></td></tr></table></figure>
+<p>创建 locale.conf 并提交您的本地化选项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># echo LANG=en_US.UTF-8 &gt; /etc/locale.conf</span></span><br></pre></td></tr></table></figure>
+<h4 id="时间"><a href="#时间" class="headerlink" title="时间"></a>时间</h4><p>可用的时区全集中在 /usr/share/Zone/SubZone 目录里了。选择时区：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tzselect</span></span><br></pre></td></tr></table></figure>
+<p>将 /etc/localtime 软链接到 /usr/share/zoneinfo/Zone/SubZone，国内不知道什么情况，没有北京，只有上海，所以软链接到上海就好：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime</span></span><br></pre></td></tr></table></figure>
+<p>建议设置时间标准为 UTC，并调整 时间漂移：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># hwclock --systohc --utc</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置-Root-密码"><a href="#设置-Root-密码" class="headerlink" title="设置 Root 密码"></a>设置 Root 密码</h4><p>用 passwd 设置一个 root 密码，root密码就是最高用户权限啦：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># passwd</span></span><br></pre></td></tr></table></figure>
+<h4 id="BIOS-MBR"><a href="#BIOS-MBR" class="headerlink" title="BIOS/MBR"></a>BIOS/MBR</h4><p>下面介绍在 MBR 系统上使用 Grub。安装 grub 和 os-prober 包，并执行 grub-install. 须根据实际分区自行调整 /dev/sda, 切勿在块设备后附加数字，比如 /dev/sda1 就不对。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pacman -S grub os-prober</span></span><br><span class="line"><span class="comment"># grub-install /dev/sda</span></span><br></pre></td></tr></table></figure>
+<p>下面命令会自动生成配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># grub-mkconfig -o /boot/grub/grub.cfg</span></span><br></pre></td></tr></table></figure>
+<p>详情参考<a href="https://wiki.archlinux.org/index.php/GRUB_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)" target="_blank" rel="noopener">GRUB (简体中文)</a>官方文档 。</p>
+<h4 id="配置网络"><a href="#配置网络" class="headerlink" title="配置网络"></a>配置网络</h4><p>该过程与#建立网络连接基本一致，只不过该配置在新系统每次开机时都会自动生效。</p>
+<h5 id="主机名"><a href="#主机名" class="headerlink" title="主机名"></a>主机名</h5><p>设置个您喜欢的主机名，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># echo myhostname &gt; /etc/hostname</span></span><br></pre></td></tr></table></figure>
+<p>myhostname替换为你喜欢的主机名，不是用户名。</p>
+<h5 id="有线网络"><a href="#有线网络" class="headerlink" title="有线网络"></a>有线网络</h5><p>如果您只用单一且固定的有线网络连接，启动 dhcpcd 服务，interface 是您的网络接口名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># systemctl enable dhcpcd@interface.service</span></span><br></pre></td></tr></table></figure>
+<h4 id="卸载分区并重启系统"><a href="#卸载分区并重启系统" class="headerlink" title="卸载分区并重启系统"></a>卸载分区并重启系统</h4><p>设置 root 密码（前面干过一遍了，不知为何官方文档又来一遍，反正我是照做了，差不了几分钟，最后崩了重来更费事）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># passwd</span></span><br></pre></td></tr></table></figure>
+<p>离开 chroot 环境：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># exit</span></span><br></pre></td></tr></table></figure>
+<p>重启计算机：</p>
+<figure class="highlight zsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># reboot</span></span><br></pre></td></tr></table></figure>
+<p>虚拟机里面重启电脑默认进入虚拟光盘，所以啦，建议“关机”后“退出”光盘，再开机；不过鄙人一般先重启摁F12，选硬盘启动就好了。</p>
+<h3 id="安装之后"><a href="#安装之后" class="headerlink" title="安装之后"></a>安装之后</h3><p>安装之后不要以为就万事大吉了，现在进入系统还是黑底白字的命令行，就像这样，只不过还没有登录<img src="/uploads/%E5%AE%89%E8%A3%85%E5%A5%BD%E5%90%8E%E7%9A%84Arch.JPG" alt="安装好后的Arch"><br>而且只有一个root用户，接下来看这篇文章<a href="https://wiki.archlinux.org/index.php/General_recommendations_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)" target="_blank" rel="noopener">General recommendations (简体中文)</a><br>现在心烦意乱的，剩下的以后再写吧。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2016/06/02/esp8266/" rel="next" title="esp8266">
+      esp8266 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#上路"><span class="nav-number">1.</span> <span class="nav-text">上路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初识Arch"><span class="nav-number">1.1.</span> <span class="nav-text">初识Arch</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#镜像源下载"><span class="nav-number">2.1.</span> <span class="nav-text">镜像源下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#镜像烧录"><span class="nav-number">2.2.</span> <span class="nav-text">镜像烧录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装开始"><span class="nav-number">2.3.</span> <span class="nav-text">安装开始</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#连接到因特网"><span class="nav-number">2.3.1.</span> <span class="nav-text">连接到因特网</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更新系统时间"><span class="nav-number">2.3.2.</span> <span class="nav-text">更新系统时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#识别设备"><span class="nav-number">2.3.3.</span> <span class="nav-text">识别设备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建新分区表"><span class="nav-number">2.3.4.</span> <span class="nav-text">创建新分区表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用-parted-进行分区"><span class="nav-number">2.3.5.</span> <span class="nav-text">用 parted 进行分区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#格式化文件系统"><span class="nav-number">2.3.6.</span> <span class="nav-text">格式化文件系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装-1"><span class="nav-number">2.3.7.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装基本软件包"><span class="nav-number">2.3.8.</span> <span class="nav-text">安装基本软件包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置"><span class="nav-number">2.3.9.</span> <span class="nav-text">配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#fstab"><span class="nav-number">2.3.9.1.</span> <span class="nav-text">fstab</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#chroot"><span class="nav-number">2.3.9.2.</span> <span class="nav-text">chroot</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Locale"><span class="nav-number">2.3.9.3.</span> <span class="nav-text">Locale</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#时间"><span class="nav-number">2.3.10.</span> <span class="nav-text">时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置-Root-密码"><span class="nav-number">2.3.11.</span> <span class="nav-text">设置 Root 密码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BIOS-MBR"><span class="nav-number">2.3.12.</span> <span class="nav-text">BIOS&#x2F;MBR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置网络"><span class="nav-number">2.3.13.</span> <span class="nav-text">配置网络</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#主机名"><span class="nav-number">2.3.13.1.</span> <span class="nav-text">主机名</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#有线网络"><span class="nav-number">2.3.13.2.</span> <span class="nav-text">有线网络</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#卸载分区并重启系统"><span class="nav-number">2.3.14.</span> <span class="nav-text">卸载分区并重启系统</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装之后"><span class="nav-number">2.4.</span> <span class="nav-text">安装之后</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">zhangpu</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhangpu</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
