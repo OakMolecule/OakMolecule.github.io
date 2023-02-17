@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.2.0">
+<meta name="generator" content="Hexo 4.2.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
@@ -13,29 +13,29 @@
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"zhangpu-vp.cn","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="上路初识Arch寒假闲的作死，非要在装了linux的机子上重装一遍windows，作死搞废GRUB引导，在张大师的博客引导下初识Arch，配置了一天脑子都快炸了，最后在临睡觉前搞好了。前两天没地方呆，各处实验室用不了，闲的无聊，无奈之下，装了个virtualbox虚拟机，奋斗三天，装崩数次，最终装上，虽说用了不超过一小时，又雪崩了吧，好歹成功一回。Arch并不太懂，官方介绍献上Arch Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ArchLinux 安装">
-<meta property="og:url" content="http://yoursite.com/2016/05/16/arch-installation/index.html">
+<meta property="og:url" content="http://zhangpu-vp.cn/2016/05/16/arch-installation/index.html">
 <meta property="og:site_name" content="Oak">
 <meta property="og:description" content="上路初识Arch寒假闲的作死，非要在装了linux的机子上重装一遍windows，作死搞废GRUB引导，在张大师的博客引导下初识Arch，配置了一天脑子都快炸了，最后在临睡觉前搞好了。前两天没地方呆，各处实验室用不了，闲的无聊，无奈之下，装了个virtualbox虚拟机，奋斗三天，装崩数次，最终装上，虽说用了不超过一小时，又雪崩了吧，好歹成功一回。Arch并不太懂，官方介绍献上Arch Linux">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/uploads/Arch%E5%AE%89%E8%A3%85%E9%80%89%E6%8B%A9%E7%95%8C%E9%9D%A2.JPG">
-<meta property="og:image" content="http://yoursite.com/uploads/%E5%AE%89%E8%A3%85%E5%A5%BD%E5%90%8E%E7%9A%84Arch.JPG">
+<meta property="og:image" content="http://zhangpu-vp.cn/uploads/Arch%E5%AE%89%E8%A3%85%E9%80%89%E6%8B%A9%E7%95%8C%E9%9D%A2.JPG">
+<meta property="og:image" content="http://zhangpu-vp.cn/uploads/%E5%AE%89%E8%A3%85%E5%A5%BD%E5%90%8E%E7%9A%84Arch.JPG">
 <meta property="article:published_time" content="2016-05-16T06:37:06.000Z">
-<meta property="article:modified_time" content="2016-05-19T07:06:16.440Z">
+<meta property="article:modified_time" content="2020-06-13T08:06:46.838Z">
 <meta property="article:author" content="zhangpu">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/uploads/Arch%E5%AE%89%E8%A3%85%E9%80%89%E6%8B%A9%E7%95%8C%E9%9D%A2.JPG">
+<meta name="twitter:image" content="http://zhangpu-vp.cn/uploads/Arch%E5%AE%89%E8%A3%85%E9%80%89%E6%8B%A9%E7%95%8C%E9%9D%A2.JPG">
 
-<link rel="canonical" href="http://yoursite.com/2016/05/16/arch-installation/">
+<link rel="canonical" href="http://zhangpu-vp.cn/2016/05/16/arch-installation/">
 
 
 <script id="page-configurations">
@@ -114,15 +114,15 @@
 
 
 <nav class="site-nav">
-  <ul id="menu" class="menu">
+  <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
 
   </li>
   </ul>
@@ -135,10 +135,7 @@
     </header>
 
     
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  <div class="reading-progress-bar"></div>
 
 
     <main class="main">
@@ -146,15 +143,14 @@
         <div class="content-wrap">
           
 
-          <div class="content post">
+          <div class="content post posts-expand">
             
 
-  <div class="posts-expand">
-      
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/16/arch-installation/">
+    <link itemprop="mainEntityOfPage" href="http://zhangpu-vp.cn/2016/05/16/arch-installation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -173,7 +169,7 @@
         <div class="post-meta">
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
 
@@ -181,10 +177,10 @@
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
+                  <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2016-05-19 15:06:16" itemprop="dateModified" datetime="2016-05-19T15:06:16+08:00">2016-05-19</time>
+                <time title="修改时间：2020-06-13 16:06:46" itemprop="dateModified" datetime="2020-06-13T16:06:46+08:00">2020-06-13</time>
               </span>
 
           
@@ -199,6 +195,8 @@
 
       
         <h2 id="上路"><a href="#上路" class="headerlink" title="上路"></a>上路</h2><h3 id="初识Arch"><a href="#初识Arch" class="headerlink" title="初识Arch"></a>初识Arch</h3><p>寒假闲的作死，非要在装了linux的机子上重装一遍windows，作死搞废GRUB引导，在<a href="https://blog.yoitsu.moe/" target="_blank" rel="noopener">张大师的博客</a>引导下初识Arch，配置了一天脑子都快炸了，最后在临睡觉前搞好了。<br>前两天没地方呆，各处实验室用不了，闲的无聊，无奈之下，装了个<a href="https://www.virtualbox.org/" target="_blank" rel="noopener">virtualbox</a>虚拟机，奋斗三天，装崩数次，最终装上，虽说用了不超过一小时，又雪崩了吧，好歹成功一回。<br>Arch并不太懂，官方介绍献上<a href="https://wiki.archlinux.org/index.php/Arch_Linux_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)" target="_blank" rel="noopener">Arch Linux (简体中文)</a>，当然英文好的还是建议看英文的（像我的这种英文渣……），英文文档也献上了<a href="https://wiki.archlinux.org/index.php/Arch_Linux" target="_blank" rel="noopener">Arch Linux</a></p>
+<a id="more"></a>
+
 <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>初次安装在虚拟机，主要怕把原来的系统搞废了，资料搞丢了。</p>
 <h3 id="镜像源下载"><a href="#镜像源下载" class="headerlink" title="镜像源下载"></a>镜像源下载</h3><p>这个也不多说了Arch官网下一个啦，越新越好的了。</p>
 <h3 id="镜像烧录"><a href="#镜像烧录" class="headerlink" title="镜像烧录"></a>镜像烧录</h3><p>虚拟机安装就不要考虑烧录U盘的问题了（貌似简单了不少）。不过要说一句虚拟机的配置，理论上，Arch Linux能在任何内存空间不小于 256MB 的i686兼容机上运行。最基本的base组中包含的包将占用约 800MB 存储空间。</p>
@@ -296,7 +294,6 @@
   
   
 
-  </div>
 
 
           </div>
@@ -379,6 +376,10 @@
 
 
       </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
 
     </div>
   </aside>
@@ -393,20 +394,18 @@
         
 
         
-  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">冀ICP备19032777 </a>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">冀ICP备19032777 </a>
   </div>
 
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
-    <i class="fa fa-user"></i>
+    <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">zhangpu-vp.cn</span>
 </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
-  </div>
 
         
 
@@ -431,7 +430,7 @@
 <script src="/js/motion.js"></script>
 
 
-<script src="/js/schemes/muse.js"></script>
+<script src="/js/schemes/pisces.js"></script>
 
 
 <script src="/js/next-boot.js"></script>

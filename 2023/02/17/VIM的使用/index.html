@@ -20,20 +20,19 @@
     var CONFIG = {"hostname":"zhangpu-vp.cn","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="C&#x2F;C++ const修饰符写一篇简单点的，最近老是使用const，但是还经常想不起来咋用，老得查，写一篇记录以下，方便下次找。 作用const说白了就是希望某些值不被改变，对于一般的变量来说很简单const int i &#x3D; 1即可，但是对于指针来说就没那么简单了。 指针123const int *i &#x3D; 0;      &#x2F;&#x2F; 值不能改，指向可以随便改int *const j &#x3D; 0;">
+  <meta name="description" content="VIM的使用上次配置完YCM，发现vim绝对是宇宙最强编辑器，不接受反驳。 接下来就分享一些有意思的快捷键。{dd}，{yy} 啥的就不介绍了。 快速删除&#x2F;复制&#x2F;选中以下命令都是删除的命令，复制、选中都类似，只需要把 d 换成 y 或者 v ；别的变成语言中成对出现的符号都适用下面的命令需要把 &quot; 换成 &#39; 、 { 、( 等。  快速删除引号中的内容 di&quot;， 带着引号">
 <meta property="og:type" content="article">
-<meta property="og:title" content="C&#x2F;C++ const限定符">
-<meta property="og:url" content="http://zhangpu-vp.cn/2019/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/index.html">
+<meta property="og:title" content="VIM的使用">
+<meta property="og:url" content="http://zhangpu-vp.cn/2023/02/17/VIM%E7%9A%84%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="Oak">
-<meta property="og:description" content="C&#x2F;C++ const修饰符写一篇简单点的，最近老是使用const，但是还经常想不起来咋用，老得查，写一篇记录以下，方便下次找。 作用const说白了就是希望某些值不被改变，对于一般的变量来说很简单const int i &#x3D; 1即可，但是对于指针来说就没那么简单了。 指针123const int *i &#x3D; 0;      &#x2F;&#x2F; 值不能改，指向可以随便改int *const j &#x3D; 0;">
+<meta property="og:description" content="VIM的使用上次配置完YCM，发现vim绝对是宇宙最强编辑器，不接受反驳。 接下来就分享一些有意思的快捷键。{dd}，{yy} 啥的就不介绍了。 快速删除&#x2F;复制&#x2F;选中以下命令都是删除的命令，复制、选中都类似，只需要把 d 换成 y 或者 v ；别的变成语言中成对出现的符号都适用下面的命令需要把 &quot; 换成 &#39; 、 { 、( 等。  快速删除引号中的内容 di&quot;， 带着引号">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-11-30T11:48:52.000Z">
-<meta property="article:modified_time" content="2020-06-13T08:06:46.868Z">
+<meta property="article:published_time" content="2023-02-17T06:07:14.000Z">
+<meta property="article:modified_time" content="2023-02-17T07:17:57.875Z">
 <meta property="article:author" content="zhangpu">
-<meta property="article:tag" content="C&#x2F;C++">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://zhangpu-vp.cn/2019/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/">
+<link rel="canonical" href="http://zhangpu-vp.cn/2023/02/17/VIM%E7%9A%84%E4%BD%BF%E7%94%A8/">
 
 
 <script id="page-configurations">
@@ -46,7 +45,7 @@
   };
 </script>
 
-  <title>C/C++ const限定符 | Oak</title>
+  <title>VIM的使用 | Oak</title>
   
 
 
@@ -148,7 +147,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://zhangpu-vp.cn/2019/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/">
+    <link itemprop="mainEntityOfPage" href="http://zhangpu-vp.cn/2023/02/17/VIM%E7%9A%84%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -161,7 +160,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          C/C++ const限定符
+          VIM的使用
         </h1>
 
         <div class="post-meta">
@@ -170,23 +169,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2019-11-30 19:48:52" itemprop="dateCreated datePublished" datetime="2019-11-30T19:48:52+08:00">2019-11-30</time>
+              <time title="创建时间：2023-02-17 14:07:14 / 修改时间：15:17:57" itemprop="dateCreated datePublished" datetime="2023-02-17T14:07:14+08:00">2023-02-17</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-06-13 16:06:46" itemprop="dateModified" datetime="2020-06-13T16:06:46+08:00">2020-06-13</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C-C/" itemprop="url" rel="index"><span itemprop="name">C/C++</span></a>
+                  <a href="/categories/VIM/" itemprop="url" rel="index"><span itemprop="name">VIM</span></a>
                 </span>
             </span>
 
@@ -201,11 +194,31 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="C-C-const修饰符"><a href="#C-C-const修饰符" class="headerlink" title="C/C++ const修饰符"></a>C/C++ const修饰符</h1><p>写一篇简单点的，最近老是使用const，但是还经常想不起来咋用，老得查，写一篇记录以下，方便下次找。</p>
-<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>const说白了就是希望某些值不被改变，对于一般的变量来说很简单<code>const int i = 1</code>即可，但是对于指针来说就没那么简单了。</p>
-<h3 id="指针"><a href="#指针" class="headerlink" title="指针"></a>指针</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *i = <span class="number">0</span>;      <span class="comment">// 值不能改，指向可以随便改</span></span><br><span class="line"><span class="keyword">int</span> *<span class="keyword">const</span> j = <span class="number">0</span>;      <span class="comment">// 值可以随便改，指向不能改</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *<span class="keyword">const</span> k = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
-
-<p>前两个很容易分不清楚，首先第一个是指向常量的指针，说人话就是<code>i</code>指向的值不能通过<code>*i</code>改变，但是可以通过别的方法改变，并且<code>i</code>这个指针可以随便指向其他变量。 第二个是常量指针，即指针不能随便指别人，但是指向的值可以随便改。 第三给就是都不嫩改了。</p>
+        <h1 id="VIM的使用"><a href="#VIM的使用" class="headerlink" title="VIM的使用"></a>VIM的使用</h1><p>上次配置完YCM，发现vim绝对是宇宙最强编辑器，不接受反驳。 接下来就分享一些有意思的快捷键。<code>{dd}</code>，<code>{yy}</code> 啥的就不介绍了。</p>
+<h2 id="快速删除-复制-选中"><a href="#快速删除-复制-选中" class="headerlink" title="快速删除/复制/选中"></a>快速删除/复制/选中</h2><p>以下命令都是删除的命令，复制、选中都类似，只需要把 <code>d</code> 换成 <code>y</code> 或者 <code>v</code> ；别的变成语言中成对出现的符号都适用下面的命令需要把 <code>&quot;</code> 换成 <code>&#39;</code> 、 <code>{</code> 、<code>(</code> 等。</p>
+<ul>
+<li>快速删除引号中的内容 <code>di&quot;</code>，</li>
+<li>带着引号删除 <code>da&quot;</code></li>
+<li>删除从这个单词到下一个单词 <code>dw</code></li>
+</ul>
+<h2 id="分屏"><a href="#分屏" class="headerlink" title="分屏"></a>分屏</h2><ul>
+<li>左右分屏：<code>:vsplit filename</code></li>
+<li>上下分屏：<code>:split filename</code></li>
+</ul>
+<h3 id="实时调整当前窗口的宽度"><a href="#实时调整当前窗口的宽度" class="headerlink" title="实时调整当前窗口的宽度"></a>实时调整当前窗口的宽度</h3><ul>
+<li>右加宽，默认值为1 <code>Ctrl-w &gt;</code></li>
+<li>向右加宽宽度N <code>Ctrl-w N &gt;</code></li>
+<li>向左调整把 <code>&gt;</code> 换成 <code>&lt;</code> 即可。上下调整使用 <code>+</code> 或 <code>-</code></li>
+</ul>
+<h2 id="大小写转换"><a href="#大小写转换" class="headerlink" title="大小写转换"></a>大小写转换</h2><p>VIM 中单个字符大小写转换使用 <code>~</code>，多个就稍微有点麻烦了。 可以使用下面操作快速切换：</p>
+<ul>
+<li><code>gu + 限定符</code>：切换为小写</li>
+<li><code>gU + 限定符</code>：切换为大写</li>
+</ul>
+<p>下面就属于一些配合vim快捷键的技巧了，比如说全文转大写 <code>gggUG</code>，可以分为几个部分 <code>gg</code>、<code>gU</code> 和 <code>G</code>，这样就可以理解为先回到开头，然后转为大写，直到最后。剩下就看灵活发挥了。</p>
+<h3 id="括号快速切换"><a href="#括号快速切换" class="headerlink" title="括号快速切换"></a>括号快速切换</h3><p>在匹配的括号之间快速切换使用 <code>%</code></p>
+<hr>
+<p>一个快捷键见总结 <a href="https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt" target="_blank" rel="noopener">https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt</a></p>
 
     </div>
 
@@ -214,9 +227,6 @@
     
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/C-C/" rel="tag"># C/C++</a>
-          </div>
 
         
 
@@ -224,13 +234,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/11/01/linux-user-info/" rel="prev" title="Linux用户信息详解">
-      <i class="fa fa-chevron-left"></i> Linux用户信息详解
+    <a href="/2019/12/17/how-sudo-works/" rel="prev" title="sudo的工作原理">
+      <i class="fa fa-chevron-left"></i> sudo的工作原理
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2019/12/17/how-sudo-works/" rel="next" title="sudo的工作原理">
-      sudo的工作原理 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -289,7 +296,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-C-const修饰符"><span class="nav-number">1.</span> <span class="nav-text">C&#x2F;C++ const修饰符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#作用"><span class="nav-number">1.1.</span> <span class="nav-text">作用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#指针"><span class="nav-number">1.1.1.</span> <span class="nav-text">指针</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#VIM的使用"><span class="nav-number">1.</span> <span class="nav-text">VIM的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#快速删除-复制-选中"><span class="nav-number">1.1.</span> <span class="nav-text">快速删除&#x2F;复制&#x2F;选中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分屏"><span class="nav-number">1.2.</span> <span class="nav-text">分屏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实时调整当前窗口的宽度"><span class="nav-number">1.2.1.</span> <span class="nav-text">实时调整当前窗口的宽度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#大小写转换"><span class="nav-number">1.3.</span> <span class="nav-text">大小写转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#括号快速切换"><span class="nav-number">1.3.1.</span> <span class="nav-text">括号快速切换</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
