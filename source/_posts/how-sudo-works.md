@@ -14,23 +14,30 @@ date: 2019-12-17 12:27:40
 此文不介绍sudoers文件的配置方法，只是简单介绍sudo工作流程。
 ## 工作流程
 工作流程如下图，第一次用markdown写流程图，不太精细。
-``` flow
-st=>start: 用户执行sudo
-is_have_cookie=>condition: 检查/var/run/sudo/ts文件夹下是否有认证文件
-cookie_is_expire=>condition: 检查认证文件是否有效
-is_in_sudoers=>condition: 是否在/etc/sudoers文件中
-input_passwd=>operation: 输入密码
-op=>operation: 执行并返回结果
-e=>end: 退出
-st->is_have_cookie
-op->e
-input_passwd->is_in_sudoers
-is_have_cookie(yes)->cookie_is_expire
-is_have_cookie(no)->input_passwd
-cookie_is_expire(yes)->is_in_sudoers
-cookie_is_expire(no)->input_passwd
-is_in_sudoers(yes)->op
-is_in_sudoers(no)->e
+``` mermaid
+flowchart TD
+    st([用户执行sudo])
+    is_have_cookie{检查 /var/run/sudo/ts 文件夹下是否有认证文件}
+    cookie_is_expire{检查认证文件是否有效}
+    is_in_sudoers{是否在 /etc/sudoers 文件中}
+    input_passwd[输入密码]
+    op[执行并返回结果]
+    e([退出])
+
+    st --> is_have_cookie
+
+    is_have_cookie -- yes --> cookie_is_expire
+    is_have_cookie -- no --> input_passwd
+
+    cookie_is_expire -- yes --> is_in_sudoers
+    cookie_is_expire -- no --> input_passwd
+
+    input_passwd --> is_in_sudoers
+
+    is_in_sudoers -- yes --> op
+    is_in_sudoers -- no --> e
+
+    op --> e
 ```
 
 ## 认证文件简介
