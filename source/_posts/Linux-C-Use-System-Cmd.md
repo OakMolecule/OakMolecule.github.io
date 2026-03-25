@@ -2,6 +2,9 @@
 title: 在Linux C调用系统命令
 date: 2020-03-26 15:42:16
 tags:
+  - Linux
+  - C/C++
+  - 系统命令
 categories:
   - Linux
   - C/C++

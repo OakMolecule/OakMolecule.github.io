@@ -2,6 +2,7 @@
 title: Linux密码加密方法
 tags:
   - Linux
+  - 密码加密
 url: 128.html
 id: 128
 comments: false

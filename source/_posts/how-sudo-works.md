@@ -2,6 +2,7 @@
 title: sudo的工作原理
 tags:
   - Linux
+  - sudo
 url: 113.html
 id: 113
 comments: false
@@ -11,9 +12,12 @@ date: 2019-12-17 12:27:40
 ---
 
 # sudo的工作原理
+
 此文不介绍sudoers文件的配置方法，只是简单介绍sudo工作流程。
+
 ## 工作流程
 工作流程如下图，第一次用markdown写流程图，不太精细。
+
 ``` mermaid
 flowchart TD
     st([用户执行sudo])
@@ -41,10 +45,12 @@ flowchart TD
 ```
 
 ## 认证文件简介
+
 认证文件可以理解为cookie，里面记录认证时间，在终端的PID，用户ID，终端的ttydev。
 解析代码参考[Github](https://github.com/nongiach/sudo_inject/ "Github")。
 认证文件以二进制保存，每个用户会有一个自己的cookie文件，放在`/var/run/sudo/ts`文件夹下，文件名为用户名。
 文件保存结构如下：
+
 ``` C
 struct timestamp_entry_v1 {
     unsigned short version;	/* version number */
@@ -78,6 +84,7 @@ struct timestamp_entry {
 
 有两种保存方式，通过`version`进行区分，当`version`值为1时使用上面的结构体；剩下的使用下面的结构体。
 `type`字段表示这下方的`union`中使用哪个字段，`type`会使用以下几个值：
+
 ``` C
 #define TS_GLOBAL               0x01    /* not restricted by tty or ppid */
 #define TS_TTY                  0x02    /* restricted by tty */

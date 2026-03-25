@@ -1,7 +1,11 @@
 ---
 title: ArchLinux 安装
 date: 2016-05-16 14:37:06
+categories:
+  - Linux
 tags:
+  - Linux
+  - ArchLinux
 ---
 
 ## 上路

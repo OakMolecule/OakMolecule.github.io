@@ -4,8 +4,9 @@ url: 162.html
 id: 162
 comments: false
 categories:
-  - 未分类
+  - vim
 tags:
+  - vim
 ---
 
 VIM的使用

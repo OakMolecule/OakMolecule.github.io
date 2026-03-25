@@ -5,7 +5,9 @@ id: 64
 categories:
   - Linux
 date: 2019-11-01 21:10:21
-tags: Linux
+tags:
+  - Linux
+  - 用户信息
 ---
 
 # Linux用户信息详解

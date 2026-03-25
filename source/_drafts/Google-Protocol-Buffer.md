@@ -3,8 +3,10 @@ title: Google Protocol Buffer
 url: 57.html
 id: 57
 categories:
-  - 未分类
+  - 中间件
 tags:
+  - Protocol Buffer
+  - 序列化
 ---
 
 Google Protocol Buffer

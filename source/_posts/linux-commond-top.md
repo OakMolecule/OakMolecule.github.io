@@ -2,6 +2,7 @@
 title: Linux命令-top
 tags:
   - Linux
+  - top
 url: 23.html
 id: 23
 categories:

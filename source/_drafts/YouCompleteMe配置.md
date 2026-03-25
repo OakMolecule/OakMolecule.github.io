@@ -6,6 +6,8 @@ comments: false
 categories:
   - vim
 tags:
+  - vim
+  - YouCompleteMe
 ---
 
 YouCompleteMe安装及配置
