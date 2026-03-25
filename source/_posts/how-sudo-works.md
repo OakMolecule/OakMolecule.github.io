@@ -11,12 +11,11 @@ categories:
 date: 2019-12-17 12:27:40
 ---
 
-# sudo的工作原理
-
 此文不介绍sudoers文件的配置方法，只是简单介绍sudo工作流程。
 
 ## 工作流程
 工作流程如下图，第一次用markdown写流程图，不太精细。
+
 
 ``` mermaid
 flowchart TD
@@ -43,6 +42,7 @@ flowchart TD
 
     op --> e
 ```
+<!-- more -->
 
 ## 认证文件简介
 

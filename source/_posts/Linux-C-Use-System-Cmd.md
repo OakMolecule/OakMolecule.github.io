@@ -34,6 +34,8 @@ int execvpe(const char *file, char *const argv[],
                 char *const envp[]);
 ```
 
+<!-- more -->
+
 # system
 
 函数定义如下：

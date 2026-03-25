@@ -15,7 +15,7 @@ tags:
 前两天没地方呆，各处实验室用不了，闲的无聊，无奈之下，装了个[virtualbox](https://www.virtualbox.org/)虚拟机，奋斗三天，装崩数次，最终装上，虽说用了不超过一小时，又雪崩了吧，好歹成功一回。
 Arch并不太懂，官方介绍献上[Arch Linux (简体中文)](https://wiki.archlinux.org/index.php/Arch_Linux_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87))，当然英文好的还是建议看英文的（像我的这种英文渣......），英文文档也献上了[Arch Linux](https://wiki.archlinux.org/index.php/Arch_Linux)
 
-<!--- more --->
+<!-- more -->
 
 ## 安装
 初次安装在虚拟机，主要怕把原来的系统搞废了，资料搞丢了。
