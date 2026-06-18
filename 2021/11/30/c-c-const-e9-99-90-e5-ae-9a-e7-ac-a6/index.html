@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"zhangpu-vp.cn","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"github","dark":"github-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":"enable","style":"mac"},"fold":{"enable":true,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":false,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="const 和 constexpr 都是很常见的关键字，但实际使用时经常会把“只读语义”和“编译期常量”混在一起。把这几个概念放在同一篇里梳理清楚。 C 里的 constC 里的 const 本质上是一个类型限定符，表示不能通过这个表达式去修改对象。 先看最基本的变量场景： 1const int n &#x3D; 10;  这里的重点不是“对象绝对不可变”，而是编译器不允许你再通过 n 这个表达式给它赋值。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C 的 const 与 C++ 的 const&#x2F;constexpr">
+<meta property="og:url" content="https://zhangpu-vp.cn/2021/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/index.html">
+<meta property="og:site_name" content="Oak">
+<meta property="og:description" content="const 和 constexpr 都是很常见的关键字，但实际使用时经常会把“只读语义”和“编译期常量”混在一起。把这几个概念放在同一篇里梳理清楚。 C 里的 constC 里的 const 本质上是一个类型限定符，表示不能通过这个表达式去修改对象。 先看最基本的变量场景： 1const int n &#x3D; 10;  这里的重点不是“对象绝对不可变”，而是编译器不允许你再通过 n 这个表达式给它赋值。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-30T11:48:52.000Z">
+<meta property="article:modified_time" content="2026-06-18T00:48:29.697Z">
+<meta property="article:author" content="Oak">
+<meta property="article:tag" content="C&#x2F;C++">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://zhangpu-vp.cn/2021/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://zhangpu-vp.cn/2021/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/","path":"2021/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/","title":"C 的 const 与 C++ 的 const/constexpr"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>C 的 const 与 C++ 的 const/constexpr | Oak</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Oak</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E9%87%8C%E7%9A%84-const"><span class="nav-number">1.</span> <span class="nav-text">C 里的 const</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E9%87%8C%E7%9A%84-const"><span class="nav-number">1.1.</span> <span class="nav-text">指针里的 const</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-%E9%87%8C-const-%E7%9A%84%E4%B8%80%E4%B8%AA%E5%B8%B8%E8%A7%81%E8%AF%AF%E5%8C%BA"><span class="nav-number">1.2.</span> <span class="nav-text">C 里 const 的一个常见误区</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E9%87%8C%E7%9A%84-const-1"><span class="nav-number">2.</span> <span class="nav-text">C++ 里的 const</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#const-%E5%8F%98%E9%87%8F"><span class="nav-number">2.1.</span> <span class="nav-text">const 变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#const-%E5%BC%95%E7%94%A8"><span class="nav-number">2.2.</span> <span class="nav-text">const 引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#const-%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">const 成员函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#constexpr-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">3.</span> <span class="nav-text">constexpr 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#const-%E5%92%8C-constexpr-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">const 和 constexpr 的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#constexpr%E3%80%81const-%E5%92%8C-define-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">5.</span> <span class="nav-text">constexpr、const 和 #define 的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%A5%E6%80%8E%E4%B9%88%E9%80%89"><span class="nav-number">6.</span> <span class="nav-text">该怎么选</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">小结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Oak</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/OakMolecule" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;OakMolecule" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://zhangpu-vp.cn/2021/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Oak">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="C 的 const 与 C++ 的 const&#x2F;constexpr | Oak">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C 的 const 与 C++ 的 const/constexpr<a href="https://gitee.com/OakMolecule/blog/tree/master/source/_posts/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-30 19:48:52" itemprop="dateCreated datePublished" datetime="2021-11-30T19:48:52+08:00">2021-11-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-06-18 08:48:29" itemprop="dateModified" datetime="2026-06-18T08:48:29+08:00">2026-06-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/C-C/" itemprop="url" rel="index"><span itemprop="name">C/C++</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><code>const</code> 和 <code>constexpr</code> 都是很常见的关键字，但实际使用时经常会把“只读语义”和“编译期常量”混在一起。把这几个概念放在同一篇里梳理清楚。</p>
+<h2 id="C-里的-const"><a href="#C-里的-const" class="headerlink" title="C 里的 const"></a>C 里的 <code>const</code></h2><p>C 里的 <code>const</code> 本质上是一个类型限定符，表示不能通过这个表达式去修改对象。</p>
+<p>先看最基本的变量场景：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> n = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里的重点不是“对象绝对不可变”，而是编译器不允许你再通过 <code>n</code> 这个表达式给它赋值。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> n = <span class="number">10</span>;</span><br><span class="line"><span class="comment">// n = 20;   // 编译报错</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<h3 id="指针里的-const"><a href="#指针里的-const" class="headerlink" title="指针里的 const"></a>指针里的 <code>const</code></h3><p><code>const</code> 一旦和指针放在一起，就容易混。最稳妥的判断方式是直接看它修饰谁。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> *p1 = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> *<span class="type">const</span> p2 = <span class="number">0</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> *<span class="type">const</span> p3 = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>它们分别表示：</p>
+<ul>
+<li><code>const int *p1</code>：<code>p1</code> 指向的内容不能通过 <code>p1</code> 修改，但 <code>p1</code> 可以改指向</li>
+<li><code>int *const p2</code>：<code>p2</code> 本身不能改指向，但可以通过 <code>p2</code> 修改它指向的内容</li>
+<li><code>const int *const p3</code>：指向不能改，内容也不能通过它改</li>
+</ul>
+<p>实践里可以先按下面这个规则判断：</p>
+<ul>
+<li><code>const</code> 在 <code>*</code> 左边，通常限制“指向的内容”</li>
+<li><code>const</code> 靠近变量名时，通常限制“指针本身”</li>
+</ul>
+<p>举个例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> b = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> *p1 = &amp;a;</span><br><span class="line">p1 = &amp;b;        <span class="comment">// 可以</span></span><br><span class="line"><span class="comment">// *p1 = 3;     // 不可以</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> *<span class="type">const</span> p2 = &amp;a;</span><br><span class="line">*p2 = <span class="number">3</span>;        <span class="comment">// 可以</span></span><br><span class="line"><span class="comment">// p2 = &amp;b;     // 不可以</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="C-里-const-的一个常见误区"><a href="#C-里-const-的一个常见误区" class="headerlink" title="C 里 const 的一个常见误区"></a>C 里 <code>const</code> 的一个常见误区</h3><p>一个很常见的误解，是把 <code>const</code> 和“编译期常量”直接画等号。</p>
+<p>在 C 里，<code>const</code> 更偏向“只读语义”，不等于它一定能拿去做所有要求编译期常量的场景。也就是说，<code>const</code> 的重点是“限制修改”，不一定是“在预处理或编译早期就能完全替换成字面量”。</p>
+<p>所以在 C 语言里，先把 <code>const</code> 理解成“只读限制”，通常是最准确的切入点。</p>
+<h2 id="C-里的-const-1"><a href="#C-里的-const-1" class="headerlink" title="C++ 里的 const"></a>C++ 里的 <code>const</code></h2><p>C++ 继承了 C 里 <code>const</code> 的基本含义，但因为 C++ 引入了引用、类和成员函数，<code>const</code> 的使用范围也明显更广。</p>
+<h3 id="const-变量"><a href="#const-变量" class="headerlink" title="const 变量"></a><code>const</code> 变量</h3><p>最基本的写法和 C 类似：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> n = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<p>语义和 C 中一致：不能通过这个名字修改对象。</p>
+<h3 id="const-引用"><a href="#const-引用" class="headerlink" title="const 引用"></a><code>const</code> 引用</h3><p>在 C++ 里，<code>const</code> 引用最常见的落点就是函数参数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">(<span class="type">const</span> std::string&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 不能修改 s</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种写法通常有两个直接收益：</p>
+<ul>
+<li>避免不必要的对象拷贝</li>
+<li>同时明确函数不会修改参数</li>
+</ul>
+<p>因此在“只读的大对象传参”这个场景里，<code>const T&amp;</code> 基本是默认选项。</p>
+<h3 id="const-成员函数"><a href="#const-成员函数" class="headerlink" title="const 成员函数"></a><code>const</code> 成员函数</h3><p>类的成员函数后面也可以加 <code>const</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="type">int</span> x;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">get</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>const</code> 表示这个成员函数不会修改当前对象的普通成员。</p>
+<p>也正因为如此，<code>const</code> 对象只能调用 <code>const</code> 成员函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> A a&#123;<span class="number">1</span>&#125;;</span><br><span class="line"><span class="comment">// a.set(2);    // 如果 set 不是 const，就不能调</span></span><br><span class="line">a.<span class="built_in">get</span>();        <span class="comment">// 可以</span></span><br></pre></td></tr></table></figure>
+
+<p>这也是类接口设计里经常要区分“观察操作”和“修改操作”的原因。</p>
+<h2 id="constexpr-是什么"><a href="#constexpr-是什么" class="headerlink" title="constexpr 是什么"></a><code>constexpr</code> 是什么</h2><p><code>constexpr</code> 是 C++ 提供的关键字，C 语言里没有对应概念。</p>
+<p>可以先把它概括成一句话：<code>constexpr</code> 用来描述“这个值或这个函数结果可以在编译期确定”。</p>
+<p>最常见的是 <code>constexpr</code> 变量：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> buf_size = <span class="number">1024</span>;</span><br></pre></td></tr></table></figure>
+
+<p>它比普通 <code>const</code> 更强，因为它强调的是“编译期常量表达式”。</p>
+<p><code>constexpr</code> 也可以修饰函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="type">int</span> <span class="title">square</span><span class="params">(<span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x * x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果传入的是编译期可知的值，那么结果也可以在编译期算出来：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> n = <span class="built_in">square</span>(<span class="number">8</span>);</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，<code>constexpr</code> 函数不等于“只能在编译期调用”。它也可以参与运行期计算，只是在条件满足时，编译器可以提前完成求值。</p>
+<h2 id="const-和-constexpr-的区别"><a href="#const-和-constexpr-的区别" class="headerlink" title="const 和 constexpr 的区别"></a><code>const</code> 和 <code>constexpr</code> 的区别</h2><p>这两个概念很容易混在一起，但侧重点其实很明确：</p>
+<ul>
+<li><code>const</code> 强调“只读，不允许修改”</li>
+<li><code>constexpr</code> 强调“编译期可求值”</li>
+</ul>
+<p>可以直接记成：</p>
+<ul>
+<li><code>const</code> 解决的是“能不能改”</li>
+<li><code>constexpr</code> 解决的是“能不能在编译期确定”</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> a = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="type">int</span> b = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这两个看起来都像常量，但语义并不相同。<code>b</code> 明确是编译期常量；<code>a</code> 只是只读对象，在很多场景下也能作为常量使用，但它的核心语义仍然是“不可修改”。</p>
+<p>所以如果要表达“这是一个用于编译期求值的常量”，优先考虑 <code>constexpr</code>；如果只是表达“这个对象创建后不应再被修改”，<code>const</code> 就足够了。</p>
+<h2 id="constexpr、const-和-define-的区别"><a href="#constexpr、const-和-define-的区别" class="headerlink" title="constexpr、const 和 #define 的区别"></a><code>constexpr</code>、<code>const</code> 和 <code>#define</code> 的区别</h2><p>这三个经常都被拿来“定义常量”，但它们其实不在同一个层面上。</p>
+<p>先看一个对比表：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>所处阶段</th>
+<th>有无类型</th>
+<th>有无作用域</th>
+<th>主要语义</th>
+<th>更适合的场景</th>
+<th>主要问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>#define BUF_SIZE 1024</code></td>
+<td>预处理阶段</td>
+<td>无</td>
+<td>无</td>
+<td>文本替换</td>
+<td>条件编译、头文件保护、宏开关</td>
+<td>没有类型，调试体验差，容易产生意外替换</td>
+</tr>
+<tr>
+<td><code>const int buf_size = 1024;</code></td>
+<td>语言语义层面</td>
+<td>有</td>
+<td>有</td>
+<td>只读对象</td>
+<td>表达“这个值不应该再改”</td>
+<td>重点是只读，不是显式强调编译期常量</td>
+</tr>
+<tr>
+<td><code>constexpr int buf_size = 1024;</code></td>
+<td>语言语义层面</td>
+<td>有</td>
+<td>有</td>
+<td>编译期常量表达式</td>
+<td>数组大小、模板参数、<code>constexpr</code> 函数等需要编译期信息的场景</td>
+<td>只在 C++ 里有，使用条件比 <code>const</code> 更严格</td>
+</tr>
+</tbody></table>
+<p>如果只抓最关键的一点：</p>
+<ul>
+<li><code>#define</code> 是预处理器做文本替换</li>
+<li><code>const</code> 表达的是只读语义</li>
+<li><code>constexpr</code> 表达的是编译期常量语义</li>
+</ul>
+<h2 id="该怎么选"><a href="#该怎么选" class="headerlink" title="该怎么选"></a>该怎么选</h2><p>如果只是做预处理替换，或者做条件编译，用 <code>#define</code> 很正常：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> LOG_DEBUG 1</span></span><br></pre></td></tr></table></figure>
+
+<p>如果是在 C++ 里定义普通常量，通常优先考虑 <code>const</code> 或 <code>constexpr</code>，尽量不要再回退到 <code>#define</code>。</p>
+<ul>
+<li>只想表示“这个值不应该再改了”：用 <code>const</code></li>
+<li>想明确表示“这是编译期常量”：用 <code>constexpr</code></li>
+<li>需要做预处理替换或条件编译：用 <code>#define</code></li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>最后收束成几句话：</p>
+<ul>
+<li>C 里的 <code>const</code> 重点是“只读限制”</li>
+<li>C++ 里的 <code>const</code> 在引用、成员函数这些地方更常见也更重要</li>
+<li><code>constexpr</code> 是 C++ 提供的“编译期常量”工具，语义比 <code>const</code> 更强</li>
+<li>在 C++ 里定义普通常量，优先考虑 <code>const</code> 或 <code>constexpr</code></li>
+</ul>
+<p>如果后面还要继续展开，这个话题还可以再单独补一篇，把 <code>const</code>、<code>constexpr</code>、<code>consteval</code>、<code>constinit</code> 放在一起看。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C-C/" rel="tag"># C/C++</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/03/26/Linux-C-Use-System-Cmd/" rel="prev" title="在Linux C调用系统命令">
+                  <i class="fa fa-angle-left"></i> 在Linux C调用系统命令
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/06/18/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/" rel="next" title="Linux 进程隐藏及发现">
+                  Linux 进程隐藏及发现 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">冀ICP备19032777号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 2021 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Oak</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/OakMolecule" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
