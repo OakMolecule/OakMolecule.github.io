@@ -24,13 +24,13 @@
     <meta name="description" content="声明 本文内容仅用于安全研究与技术学习，旨在分析隐藏进程相关实现及检测思路。 文中涉及的技术与代码具有潜在滥用风险，请勿用于未授权场景或任何非法用途。 相关实验与验证应在隔离的测试环境中进行，避免对真实系统造成影响。 作者不对因使用本文内容而产生的任何直接或间接后果负责。    什么是应用层隐藏进程应用层隐藏进程本质不是让进程真的从内核消失，而是：  让“观察者看不到”或“看到被篡改后的结果”">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux 进程隐藏及发现">
-<meta property="og:url" content="https://www.xixi01.top/2026/06/22/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/index.html">
+<meta property="og:url" content="https://www.xixi01.top/2026/06/23/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/index.html">
 <meta property="og:site_name" content="Oak">
 <meta property="og:description" content="声明 本文内容仅用于安全研究与技术学习，旨在分析隐藏进程相关实现及检测思路。 文中涉及的技术与代码具有潜在滥用风险，请勿用于未授权场景或任何非法用途。 相关实验与验证应在隔离的测试环境中进行，避免对真实系统造成影响。 作者不对因使用本文内容而产生的任何直接或间接后果负责。    什么是应用层隐藏进程应用层隐藏进程本质不是让进程真的从内核消失，而是：  让“观察者看不到”或“看到被篡改后的结果”">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.xixi01.top/uploads/2019/11/image-1574071969889.png">
-<meta property="article:published_time" content="2026-06-22T10:39:41.040Z">
-<meta property="article:modified_time" content="2026-06-22T10:39:41.040Z">
+<meta property="article:published_time" content="2026-06-23T02:22:43.423Z">
+<meta property="article:modified_time" content="2026-06-23T02:22:43.423Z">
 <meta property="article:author" content="Oak">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="进程隐藏">
@@ -38,10 +38,10 @@
 <meta name="twitter:image" content="https://www.xixi01.top/uploads/2019/11/image-1574071969889.png">
 
 
-<link rel="canonical" href="https://www.xixi01.top/2026/06/22/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/">
+<link rel="canonical" href="https://www.xixi01.top/2026/06/23/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://www.xixi01.top/2026/06/22/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/","path":"2026/06/22/Linux进程隐藏及发现/","title":"Linux 进程隐藏及发现"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://www.xixi01.top/2026/06/23/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/","path":"2026/06/23/Linux进程隐藏及发现/","title":"Linux 进程隐藏及发现"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>Linux 进程隐藏及发现 | Oak</title>
@@ -117,7 +117,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-rusttraining"><a href="/RustTraining/" rel="section"><i class="fab fa-rust fa-fw"></i>RustTraining</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-rusttraining"><a href="/RustTraining/" rel="section"><i class="fab fa-rust fa-fw"></i>RustTraining</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -228,7 +228,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2026/06/22/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/">
+    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2026/06/23/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -257,7 +257,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2026-06-22 18:39:41" itemprop="dateCreated datePublished" datetime="2026-06-22T18:39:41+08:00">2026-06-22</time>
+      <time title="创建时间：2026-06-23 10:22:43" itemprop="dateCreated datePublished" datetime="2026-06-23T10:22:43+08:00">2026-06-23</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -402,11 +402,14 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2026/06/22/YouCompleteMe%E9%85%8D%E7%BD%AE/" rel="prev" title="YouCompleteMe 配置">
-                  <i class="fa fa-angle-left"></i> YouCompleteMe 配置
+                <a href="/2021/11/30/c-c-const-e9-99-90-e5-ae-9a-e7-ac-a6/" rel="prev" title="C 的 const 与 C++ 的 const&#x2F;constexpr">
+                  <i class="fa fa-angle-left"></i> C 的 const 与 C++ 的 const/constexpr
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2026/06/23/YouCompleteMe%E9%85%8D%E7%BD%AE/" rel="next" title="YouCompleteMe 配置">
+                  YouCompleteMe 配置 <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -424,8 +427,6 @@
   <footer class="footer">
     <div class="footer-inner">
 
-  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">冀ICP备19032777号 </a>
-  </div>
   <div class="copyright">
     &copy; 2021 – 
     <span itemprop="copyrightYear">2026</span>
