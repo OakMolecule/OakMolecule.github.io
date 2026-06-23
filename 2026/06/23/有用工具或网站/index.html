@@ -21,28 +21,29 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.xixi01.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"github","dark":"github-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":"enable","style":"mac"},"fold":{"enable":true,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":false,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="此文不介绍sudoers文件的配置方法，只是简单介绍sudo工作流程。 工作流程工作流程如下图，第一次用markdown写流程图，不太精细。 flowchart TD     st([用户执行sudo])     is_have_cookie&#123;检查 &#x2F;var&#x2F;run&#x2F;sudo&#x2F;ts 文件夹下是否有认证文件&#125;     cookie_is_expire&#123;检查认证文件是否有">
+    <meta name="description" content="平时逛到一些有意思、或者确实能省事的网站，随手记在这里。按用途分类，方便以后翻找；发现更好的同类站再补充或替换。 开发 &#x2F; 运维 编译、调试、查文档、在线跑代码、看日志之类。   Compiler Explorer (Godbolt) — 在线看 C&#x2F;C++ 等代码对应的汇编输出。适合对照编译器优化、理解内联和指令生成。注意：和本机编译选项、标准库版本可能不一致。 Rust P">
 <meta property="og:type" content="article">
-<meta property="og:title" content="sudo的工作原理">
-<meta property="og:url" content="https://www.xixi01.top/2019/12/17/how-sudo-works/index.html">
+<meta property="og:title" content="有用工具或网站">
+<meta property="og:url" content="https://www.xixi01.top/2026/06/23/%E6%9C%89%E7%94%A8%E5%B7%A5%E5%85%B7%E6%88%96%E7%BD%91%E7%AB%99/index.html">
 <meta property="og:site_name" content="Oak">
-<meta property="og:description" content="此文不介绍sudoers文件的配置方法，只是简单介绍sudo工作流程。 工作流程工作流程如下图，第一次用markdown写流程图，不太精细。 flowchart TD     st([用户执行sudo])     is_have_cookie&#123;检查 &#x2F;var&#x2F;run&#x2F;sudo&#x2F;ts 文件夹下是否有认证文件&#125;     cookie_is_expire&#123;检查认证文件是否有">
+<meta property="og:description" content="平时逛到一些有意思、或者确实能省事的网站，随手记在这里。按用途分类，方便以后翻找；发现更好的同类站再补充或替换。 开发 &#x2F; 运维 编译、调试、查文档、在线跑代码、看日志之类。   Compiler Explorer (Godbolt) — 在线看 C&#x2F;C++ 等代码对应的汇编输出。适合对照编译器优化、理解内联和指令生成。注意：和本机编译选项、标准库版本可能不一致。 Rust P">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-12-17T04:27:40.000Z">
+<meta property="article:published_time" content="2026-06-23T04:00:00.000Z">
 <meta property="article:modified_time" content="2026-06-23T03:44:44.910Z">
 <meta property="article:author" content="Oak">
-<meta property="article:tag" content="Linux">
-<meta property="article:tag" content="sudo">
+<meta property="article:tag" content="工具">
+<meta property="article:tag" content="收藏">
+<meta property="article:tag" content="网站">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://www.xixi01.top/2019/12/17/how-sudo-works/">
+<link rel="canonical" href="https://www.xixi01.top/2026/06/23/%E6%9C%89%E7%94%A8%E5%B7%A5%E5%85%B7%E6%88%96%E7%BD%91%E7%AB%99/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://www.xixi01.top/2019/12/17/how-sudo-works/","path":"2019/12/17/how-sudo-works/","title":"sudo的工作原理"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xixi01.top/2026/06/23/%E6%9C%89%E7%94%A8%E5%B7%A5%E5%85%B7%E6%88%96%E7%BD%91%E7%AB%99/","path":"2026/06/23/有用工具或网站/","title":"有用工具或网站"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>sudo的工作原理 | Oak</title>
+<title>有用工具或网站 | Oak</title>
   
 
 
@@ -166,7 +167,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">工作流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A4%E8%AF%81%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">认证文件简介</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91-%E8%BF%90%E7%BB%B4"><span class="nav-number">1.</span> <span class="nav-text">开发 &#x2F; 运维</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0-%E6%9F%A5%E9%98%85"><span class="nav-number">2.</span> <span class="nav-text">学习 &#x2F; 查阅</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E7%BA%BF%E5%B0%8F%E5%B7%A5%E5%85%B7"><span class="nav-number">3.</span> <span class="nav-text">在线小工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1-%E6%95%88%E7%8E%87-%E6%9D%82%E9%A1%B9"><span class="nav-number">4.</span> <span class="nav-text">设计 &#x2F; 效率 &#x2F; 杂项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E6%84%8F%E6%80%9D%EF%BC%88%E4%B8%8D%E4%B8%80%E5%AE%9A%E5%B8%B8%E7%94%A8%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">有意思（不一定常用）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E6%B7%98%E6%B1%B0-%E4%B8%8D%E5%86%8D%E6%8E%A8%E8%8D%90"><span class="nav-number">6.</span> <span class="nav-text">已淘汰 &#x2F; 不再推荐</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%85%E6%95%B4%E7%90%86"><span class="nav-number">7.</span> <span class="nav-text">待整理</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -226,7 +227,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2019/12/17/how-sudo-works/">
+    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2026/06/23/%E6%9C%89%E7%94%A8%E5%B7%A5%E5%85%B7%E6%88%96%E7%BD%91%E7%AB%99/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -239,12 +240,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="sudo的工作原理 | Oak">
+      <meta itemprop="name" content="有用工具或网站 | Oak">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          sudo的工作原理<a href="https://gitee.com/OakMolecule/blog/tree/master/source/_posts/how-sudo-works.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+          有用工具或网站<a href="https://gitee.com/OakMolecule/blog/tree/master/source/_posts/%E6%9C%89%E7%94%A8%E5%B7%A5%E5%85%B7%E6%88%96%E7%BD%91%E7%AB%99.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
         </h1>
 
         <div class="post-meta-container">
@@ -255,7 +256,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-12-17 12:27:40" itemprop="dateCreated datePublished" datetime="2019-12-17T12:27:40+08:00">2019-12-17</time>
+      <time title="创建时间：2026-06-23 12:00:00" itemprop="dateCreated datePublished" datetime="2026-06-23T12:00:00+08:00">2026-06-23</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -263,7 +264,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+          <a href="/categories/%E6%9D%82%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">杂记</span></a>
         </span>
     </span>
 
@@ -276,40 +277,72 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>此文不介绍sudoers文件的配置方法，只是简单介绍sudo工作流程。</p>
-<h2 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h2><p>工作流程如下图，第一次用markdown写流程图，不太精细。</p>
-<pre><code class="highlight mermaid">flowchart TD
-    st([用户执行sudo])
-    is_have_cookie&#123;检查 /var/run/sudo/ts 文件夹下是否有认证文件&#125;
-    cookie_is_expire&#123;检查认证文件是否有效&#125;
-    is_in_sudoers&#123;是否在 /etc/sudoers 文件中&#125;
-    input_passwd[输入密码]
-    op[执行并返回结果]
-    e([退出])
-
-    st --&gt; is_have_cookie
-
-    is_have_cookie -- yes --&gt; cookie_is_expire
-    is_have_cookie -- no --&gt; input_passwd
-
-    cookie_is_expire -- yes --&gt; is_in_sudoers
-    cookie_is_expire -- no --&gt; input_passwd
-
-    input_passwd --&gt; is_in_sudoers
-
-    is_in_sudoers -- yes --&gt; op
-    is_in_sudoers -- no --&gt; e
-
-    op --&gt; e</code></pre>
-<span id="more"></span>
-
-<h2 id="认证文件简介"><a href="#认证文件简介" class="headerlink" title="认证文件简介"></a>认证文件简介</h2><p>认证文件可以理解为cookie，里面记录认证时间，在终端的PID，用户ID，终端的ttydev。<br>解析代码参考<a target="_blank" rel="noopener" href="https://github.com/nongiach/sudo_inject/" title="Github">Github</a>。<br>认证文件以二进制保存，每个用户会有一个自己的cookie文件，放在<code>/var/run/sudo/ts</code>文件夹下，文件名为用户名。<br>文件保存结构如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timestamp_entry_v1</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">short</span> version;	<span class="comment">/* version number */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">short</span> size;	<span class="comment">/* entry size */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">short</span> type;	<span class="comment">/* TS_GLOBAL, TS_TTY, TS_PPID */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">short</span> flags;	<span class="comment">/* TS_DISABLED, TS_ANYUID */</span></span><br><span class="line">    <span class="type">uid_t</span> auth_uid;		<span class="comment">/* uid to authenticate as */</span></span><br><span class="line">    <span class="type">pid_t</span> sid;			<span class="comment">/* session ID associated with tty/ppid */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">ts</span>;</span>		<span class="comment">/* time stamp (CLOCK_MONOTONIC) */</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">    <span class="type">dev_t</span> ttydev;		<span class="comment">/* tty device number */</span></span><br><span class="line">    <span class="type">pid_t</span> ppid;         <span class="comment">/* parent pid */</span></span><br><span class="line">    &#125; u;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timestamp_entry</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">short</span> version;	<span class="comment">/* version number */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">short</span> size;	<span class="comment">/* entry size */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">short</span> type;	<span class="comment">/* TS_GLOBAL, TS_TTY, TS_PPID */</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">short</span> flags;	<span class="comment">/* TS_DISABLED, TS_ANYUID */</span></span><br><span class="line">    <span class="type">uid_t</span> auth_uid;		<span class="comment">/* uid to authenticate as */</span></span><br><span class="line">    <span class="type">pid_t</span> sid;			<span class="comment">/* session ID associated with tty/ppid */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">start_time</span>;</span>	<span class="comment">/* session/ppid start time */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> <span class="title">ts</span>;</span>		<span class="comment">/* time stamp (CLOCK_MONOTONIC) */</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">	<span class="type">dev_t</span> ttydev;		<span class="comment">/* tty device number */</span></span><br><span class="line">	<span class="type">pid_t</span> ppid;		<span class="comment">/* parent pid */</span></span><br><span class="line">    &#125; u;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>有两种保存方式，通过<code>version</code>进行区分，当<code>version</code>值为1时使用上面的结构体；剩下的使用下面的结构体。<br><code>type</code>字段表示这下方的<code>union</code>中使用哪个字段，<code>type</code>会使用以下几个值：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> TS_GLOBAL               0x01    <span class="comment">/* not restricted by tty or ppid */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TS_TTY                  0x02    <span class="comment">/* restricted by tty */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TS_PPID                 0x03    <span class="comment">/* restricted by ppid */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TS_LOCKEXCL             0x04    <span class="comment">/* special lock record */</span></span></span><br></pre></td></tr></table></figure>
-
-<p><code>flags</code>字段自行研究吧，没有太关注。<br><code>auth_uid</code>这个是授权用户的UID。<br><code>sid</code>这个表示所在终端的PID，但是这个有一个东西需要注意，如果这个账户是通过别的账户<code>su</code>过来的，那么他的值为最上层终端的PID，不太清楚原因。</p>
+    <div class="post-body" itemprop="articleBody"><p>平时逛到一些有意思、或者确实能省事的网站，随手记在这里。按用途分类，方便以后翻找；发现更好的同类站再补充或替换。</p>
+<h2 id="开发-运维"><a href="#开发-运维" class="headerlink" title="开发 &#x2F; 运维"></a>开发 &#x2F; 运维</h2><blockquote>
+<p>编译、调试、查文档、在线跑代码、看日志之类。</p>
+</blockquote>
+<ul>
+<li><strong><a target="_blank" rel="noopener" href="https://godbolt.org/">Compiler Explorer (Godbolt)</a></strong> — 在线看 C&#x2F;C++ 等代码对应的汇编输出。适合对照编译器优化、理解内联和指令生成。注意：和本机编译选项、标准库版本可能不一致。</li>
+<li><strong><a target="_blank" rel="noopener" href="https://play.rust-lang.org/">Rust Playground</a></strong> — 浏览器里写、编译、运行 Rust 片段，可切换 edition 和优化级别，还能看 MIR&#x2F;LLVM IR&#x2F;汇编。适合快速验证语法、给别人发可复现示例。注意：不能用本地 crate 依赖，复杂项目还是要 <code>cargo</code>。</li>
+<li><strong><a target="_blank" rel="noopener" href="https://regex101.com/">regex101</a></strong> — 正则在线调试，带匹配高亮和解释。写复杂正则时先用它验证。注意：引擎要选对你目标语言（PCRE &#x2F; ECMAScript 等）。</li>
+<li><strong><a target="_blank" rel="noopener" href="https://crontab.guru/">crontab.guru</a></strong> — cron 表达式可读化解释。写定时任务忘语法时查一下。注意：只覆盖标准 5 字段 cron，别和 systemd timer 混用。</li>
+</ul>
+<hr>
+<h2 id="学习-查阅"><a href="#学习-查阅" class="headerlink" title="学习 &#x2F; 查阅"></a>学习 &#x2F; 查阅</h2><blockquote>
+<p>教程、手册、可视化、概念讲解。</p>
+</blockquote>
+<ul>
+<li><strong><a target="_blank" rel="noopener" href="https://en.cppreference.com/">cppreference.com</a></strong> — C&#x2F;C++ 标准库与语言参考，查 API 和语义时首选。</li>
+<li><strong><a target="_blank" rel="noopener" href="https://manpages.debian.org/">debian man page</a></strong> — Debian Linux man pages 在线版，查系统调用和命令手册。</li>
+<li><strong><a target="_blank" rel="noopener" href="https://visualgo.net/">Visualgo</a></strong> — 算法与数据结构动画演示，适合复习或给别人讲清楚过程。</li>
+<li><strong>待补充</strong> —</li>
+</ul>
+<hr>
+<h2 id="在线小工具"><a href="#在线小工具" class="headerlink" title="在线小工具"></a>在线小工具</h2><blockquote>
+<p>一次性任务：格式转换、编码解码、diff、画图、算哈希等，不必装软件。</p>
+</blockquote>
+<ul>
+<li><strong><a target="_blank" rel="noopener" href="https://gchq.github.io/CyberChef/">CyberChef</a></strong> — 瑞士军刀式编码&#x2F;解码&#x2F;加解密流水线，安全分析和杂项数据处理都很好用。</li>
+<li><strong><a target="_blank" rel="noopener" href="https://www.diffchecker.com/">diffchecker.com</a></strong> — 文本 diff 对比。没有本地 diff 工具或要给同事看结果时方便。</li>
+</ul>
+<hr>
+<h2 id="设计-效率-杂项"><a href="#设计-效率-杂项" class="headerlink" title="设计 &#x2F; 效率 &#x2F; 杂项"></a>设计 &#x2F; 效率 &#x2F; 杂项</h2><blockquote>
+<p>配色、图标、截图、短链、待办、笔记协作等。</p>
+</blockquote>
+<ul>
+<li><strong><a target="_blank" rel="noopener" href="https://excalidraw.com/">excalidraw.com</a></strong> — 手绘风格白板，画架构草图、流程图很快，导出 PNG&#x2F;SVG。</li>
+<li><strong><a target="_blank" rel="noopener" href="https://mermaid.live/">Mermaid Live Editor</a></strong> — 用 Mermaid 语法在线画流程图、时序图、类图等，实时预览并导出 SVG&#x2F;PNG。写文档、博客或 README 里嵌图表时先用它调好再粘贴。注意：复杂布局有时需手动微调语法，导出样式和 Hexo&#x2F;Markdown 渲染器可能略有差异。</li>
+</ul>
+<hr>
+<h2 id="有意思（不一定常用）"><a href="#有意思（不一定常用）" class="headerlink" title="有意思（不一定常用）"></a>有意思（不一定常用）</h2><blockquote>
+<p>图一乐、开眼界、或者「原来还能这样」的站。</p>
+</blockquote>
+<ul>
+<li><strong>待补充</strong></li>
+</ul>
+<hr>
+<h2 id="已淘汰-不再推荐"><a href="#已淘汰-不再推荐" class="headerlink" title="已淘汰 &#x2F; 不再推荐"></a>已淘汰 &#x2F; 不再推荐</h2><blockquote>
+<p>站点挂了、改版变难用、或者有更好替代时挪到这里，避免以后重复踩坑。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>网站</th>
+<th>原因</th>
+<th>替代</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>（暂无）</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="待整理"><a href="#待整理" class="headerlink" title="待整理"></a>待整理</h2><p>随手记下还没分类的链接，有空再归档：</p>
+<ul>
+<li><strong>待补充</strong></li>
+</ul>
 
     </div>
 
@@ -319,22 +352,20 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Linux/" rel="tag"># Linux</a>
-              <a href="/tags/sudo/" rel="tag"># sudo</a>
+              <a href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag"># 工具</a>
+              <a href="/tags/%E6%94%B6%E8%97%8F/" rel="tag"># 收藏</a>
+              <a href="/tags/%E7%BD%91%E7%AB%99/" rel="tag"># 网站</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2019/11/01/linux-user-info/" rel="prev" title="Linux 用户信息详解">
-                  <i class="fa fa-angle-left"></i> Linux 用户信息详解
+                <a href="/2026/06/23/YouCompleteMe%E9%85%8D%E7%BD%AE/" rel="prev" title="YouCompleteMe 配置">
+                  <i class="fa fa-angle-left"></i> YouCompleteMe 配置
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2020/03/26/Linux-C-Use-System-Cmd/" rel="next" title="在Linux C调用系统命令">
-                  在Linux C调用系统命令 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>
