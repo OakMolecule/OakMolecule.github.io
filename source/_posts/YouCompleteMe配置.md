@@ -1,7 +1,6 @@
 ---
 title: YouCompleteMe 配置
-url: 148.html
-id: 148
+date: 2023-9-19 08:56:00
 comments: false
 categories:
   - Vim

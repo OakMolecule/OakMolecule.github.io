@@ -1,7 +1,6 @@
 ---
 title: Linux 进程隐藏及发现
-url: 89.html
-id: 89
+date: 2026-03-25 12:00:00
 comments: false
 categories:
   - Linux
