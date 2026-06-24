@@ -172,7 +172,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -183,7 +183,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -209,6 +209,274 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2026/06/24/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Oak">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Oak">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/06/24/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/" class="post-title-link" itemprop="url">Linux 进程隐藏及发现</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-06-24 14:53:35" itemprop="dateCreated datePublished" datetime="2026-06-24T14:53:35+08:00">2026-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <div class="note warning"><h1 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h1><ol>
+<li>本文内容仅用于安全研究与技术学习，旨在分析隐藏进程相关实现及检测思路。</li>
+<li>文中涉及的技术与代码具有潜在滥用风险，请勿用于未授权场景或任何非法用途。</li>
+<li>相关实验与验证应在隔离的测试环境中进行，避免对真实系统造成影响。</li>
+<li>作者不对因使用本文内容而产生的任何直接或间接后果负责。</li>
+</ol>
+</div>
+
+<h1 id="什么是应用层隐藏进程"><a href="#什么是应用层隐藏进程" class="headerlink" title="什么是应用层隐藏进程"></a>什么是应用层隐藏进程</h1><p>应用层隐藏进程本质不是让进程真的从内核消失，而是：</p>
+<blockquote>
+<p><strong>让“观察者看不到”或“看到被篡改后的结果”</strong></p>
+</blockquote>
+<p>换句话说：</p>
+<ul>
+<li>内核里的进程仍然存在</li>
+<li>只是用户态工具（<code>ps</code>、<code>top</code>等）被“喂了假数据”</li>
+</ul>
+<p>因此，应用层隐藏的核心是：</p>
+<blockquote>
+<p><strong>拦截信息获取路径 + 篡改结果</strong></p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/06/24/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2026/06/24/YouCompleteMe%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Oak">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Oak">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/06/24/YouCompleteMe%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">YouCompleteMe 配置</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-06-24 14:53:35" itemprop="dateCreated datePublished" datetime="2026-06-24T14:53:35+08:00">2026-06-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Vim/" itemprop="url" rel="index"><span itemprop="name">Vim</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>本文记录 YouCompleteMe（YCM）的安装与 C&#x2F;C++ 补全配置，并留存 <code>.vimrc</code>、<code>compile_commands.json</code> 等要点。行文按「先装起来 → 再配工程 → 再调 clangd → 最后理解 LSP」的顺序展开。安装方式基于 <strong>vim-plug + <code>install.py --clangd-completer</code></strong>；Neovim 用户可将插件目录改为 <code>~/.local/share/nvim/plugged</code>。YCM 详见 <a target="_blank" rel="noopener" href="https://github.com/ycm-core/YouCompleteMe">ycm-core&#x2F;YouCompleteMe</a>，C&#x2F;C++ 语言服务详见 <a target="_blank" rel="noopener" href="https://clangd.llvm.org/">clangd</a>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/06/24/YouCompleteMe%E9%85%8D%E7%BD%AE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2026/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1fork%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Oak">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Oak">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1fork%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" class="post-title-link" itemprop="url">一次诡异的 fork 死锁排查：最终定位到 glibc 2.17 的隐藏并发问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-06-23 17:27:50" itemprop="dateCreated datePublished" datetime="2026-06-23T17:27:50+08:00">2026-06-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>某日客户反馈，软件在 CentOS 7 上突然离线。</p>
+<p>登录机器后发现进程还在，但 CPU 使用率为 0，也没有任何日志输出。用 gdb 附加上去一看，程序已经陷入死锁。</p>
+<p>更诡异的是，卡住的位置竟然是 <code>fork()</code>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1fork%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -336,196 +604,6 @@
 <li><strong>待补充</strong></li>
 </ul>
 
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2026/06/23/YouCompleteMe%E9%85%8D%E7%BD%AE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Oak">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Oak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Oak">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/06/23/YouCompleteMe%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">YouCompleteMe 配置</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-06-23 11:44:44" itemprop="dateCreated datePublished" datetime="2026-06-23T11:44:44+08:00">2026-06-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Vim/" itemprop="url" rel="index"><span itemprop="name">Vim</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本文记录 YouCompleteMe（YCM）的安装与 C&#x2F;C++ 补全配置，并留存 <code>.vimrc</code>、<code>compile_commands.json</code> 等要点。行文按「先装起来 → 再配工程 → 再调 clangd → 最后理解 LSP」的顺序展开。安装方式基于 <strong>vim-plug + <code>install.py --clangd-completer</code></strong>；Neovim 用户可将插件目录改为 <code>~/.local/share/nvim/plugged</code>。YCM 详见 <a target="_blank" rel="noopener" href="https://github.com/ycm-core/YouCompleteMe">ycm-core&#x2F;YouCompleteMe</a>，C&#x2F;C++ 语言服务详见 <a target="_blank" rel="noopener" href="https://clangd.llvm.org/">clangd</a>。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/06/23/YouCompleteMe%E9%85%8D%E7%BD%AE/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2026/06/23/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Oak">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Oak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Oak">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/06/23/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/" class="post-title-link" itemprop="url">Linux 进程隐藏及发现</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-06-23 11:44:44" itemprop="dateCreated datePublished" datetime="2026-06-23T11:44:44+08:00">2026-06-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <div class="note warning"><h1 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h1><ol>
-<li>本文内容仅用于安全研究与技术学习，旨在分析隐藏进程相关实现及检测思路。</li>
-<li>文中涉及的技术与代码具有潜在滥用风险，请勿用于未授权场景或任何非法用途。</li>
-<li>相关实验与验证应在隔离的测试环境中进行，避免对真实系统造成影响。</li>
-<li>作者不对因使用本文内容而产生的任何直接或间接后果负责。</li>
-</ol>
-</div>
-
-<h1 id="什么是应用层隐藏进程"><a href="#什么是应用层隐藏进程" class="headerlink" title="什么是应用层隐藏进程"></a>什么是应用层隐藏进程</h1><p>应用层隐藏进程本质不是让进程真的从内核消失，而是：</p>
-<blockquote>
-<p><strong>让“观察者看不到”或“看到被篡改后的结果”</strong></p>
-</blockquote>
-<p>换句话说：</p>
-<ul>
-<li>内核里的进程仍然存在</li>
-<li>只是用户态工具（<code>ps</code>、<code>top</code>等）被“喂了假数据”</li>
-</ul>
-<p>因此，应用层隐藏的核心是：</p>
-<blockquote>
-<p><strong>拦截信息获取路径 + 篡改结果</strong></p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/06/23/Linux%E8%BF%9B%E7%A8%8B%E9%9A%90%E8%97%8F%E5%8F%8A%E5%8F%91%E7%8E%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
     </div>
 
@@ -1104,91 +1182,9 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2016/05/16/arch-installation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Oak">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Oak">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Oak">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/05/16/arch-installation/" class="post-title-link" itemprop="url">ArchLinux 安装</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2016-05-16 14:37:06" itemprop="dateCreated datePublished" datetime="2016-05-16T14:37:06+08:00">2016-05-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="上路"><a href="#上路" class="headerlink" title="上路"></a>上路</h2><h3 id="初识Arch"><a href="#初识Arch" class="headerlink" title="初识Arch"></a>初识Arch</h3><p>寒假闲的作死，非要在装了linux的机子上重装一遍windows，作死搞废GRUB引导，在<a target="_blank" rel="noopener" href="https://blog.yoitsu.moe/">张大师的博客</a>引导下初识Arch，配置了一天脑子都快炸了，最后在临睡觉前搞好了。<br>前两天没地方呆，各处实验室用不了，闲的无聊，无奈之下，装了个<a target="_blank" rel="noopener" href="https://www.virtualbox.org/">virtualbox</a>虚拟机，奋斗三天，装崩数次，最终装上，虽说用了不超过一小时，又雪崩了吧，好歹成功一回。<br>Arch并不太懂，官方介绍献上<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Arch_Linux_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">Arch Linux (简体中文)</a>，当然英文好的还是建议看英文的（像我的这种英文渣……），英文文档也献上了<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Arch_Linux">Arch Linux</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/05/16/arch-installation/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
 
 </div>
   </main>

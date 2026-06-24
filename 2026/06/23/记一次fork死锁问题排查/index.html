@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous" defer></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.xixi01.top","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"github","dark":"github-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":"enable","style":"mac"},"fold":{"enable":true,"height":500},"language":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":true,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":true,"motion":{"enable":false,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="某日客户反馈，软件在 CentOS 7 上突然离线。 登录机器后发现进程还在，但 CPU 使用率为 0，也没有任何日志输出。用 gdb 附加上去一看，程序已经陷入死锁。 更诡异的是，卡住的位置竟然是 fork()。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一次诡异的 fork 死锁排查：最终定位到 glibc 2.17 的隐藏并发问题">
+<meta property="og:url" content="https://www.xixi01.top/2026/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1fork%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/index.html">
+<meta property="og:site_name" content="Oak">
+<meta property="og:description" content="某日客户反馈，软件在 CentOS 7 上突然离线。 登录机器后发现进程还在，但 CPU 使用率为 0，也没有任何日志输出。用 gdb 附加上去一看，程序已经陷入死锁。 更诡异的是，卡住的位置竟然是 fork()。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-06-23T09:27:50.000Z">
+<meta property="article:modified_time" content="2026-06-24T06:53:35.303Z">
+<meta property="article:author" content="Oak">
+<meta property="article:tag" content="fork">
+<meta property="article:tag" content="glibc">
+<meta property="article:tag" content="jemalloc">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://www.xixi01.top/2026/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1fork%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://www.xixi01.top/2026/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1fork%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/","path":"2026/06/23/记一次fork死锁问题排查/","title":"一次诡异的 fork 死锁排查：最终定位到 glibc 2.17 的隐藏并发问题"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>一次诡异的 fork 死锁排查：最终定位到 glibc 2.17 的隐藏并发问题 | Oak</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.6.0/pjax.min.js" integrity="sha256-vxLn1tSKWD4dqbMRyv940UYw4sXgMtYcK6reefzZrao=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script><script src="/js/bookmark.js" defer></script><script src="/js/pjax.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+  <script src="/js/third-party/pace.js" defer></script>
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Oak</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-rusttraining"><a href="/RustTraining/" rel="section"><i class="fab fa-rust fa-fw"></i>RustTraining</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%A4%8D%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">问题复现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E4%B8%AA%E7%96%91%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">两个疑点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9D%E5%A7%8B%E5%8C%96%E6%B5%81%E7%A8%8B%E9%9D%9E%E5%B8%B8%E7%AE%80%E5%8D%95"><span class="nav-number">2.1.</span> <span class="nav-text">1. 初始化流程非常简单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-fork-%E6%80%8E%E4%B9%88%E4%BC%9A%E6%AD%BB%E9%94%81%EF%BC%9F"><span class="nav-number">2.2.</span> <span class="nav-text">2. fork 怎么会死锁？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%80%E7%96%91-jemalloc-%E5%92%8C-ptmalloc-%E6%B7%B7%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">怀疑 jemalloc 和 ptmalloc 混用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fork-%E5%86%85%E9%83%A8%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">4.</span> <span class="nav-text">fork 内部做了什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9C%9F%E6%AD%A3%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A-malloc-initialized"><span class="nav-number">5.</span> <span class="nav-text">真正的问题：__malloc_initialized</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ptmalloc-init-%E6%9C%AC%E8%BA%AB%E6%B2%A1%E6%9C%89%E9%94%81"><span class="nav-number">5.1.</span> <span class="nav-text">ptmalloc_init 本身没有锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E8%A7%A6%E5%8F%91%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">为什么会触发？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#glibc-%E7%9A%84%E5%90%8E%E7%BB%AD%E6%BC%94%E8%BF%9B"><span class="nav-number">7.</span> <span class="nav-text">glibc 的后续演进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E9%97%AE%E9%A2%98%E4%BF%AE%E6%94%B9%E6%96%B9%E5%BC%8F"><span class="nav-number">8.</span> <span class="nav-text">现有问题修改方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">9.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Oak</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/OakMolecule" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;OakMolecule" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.xixi01.top/2026/06/23/%E8%AE%B0%E4%B8%80%E6%AC%A1fork%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Oak">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Oak">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="一次诡异的 fork 死锁排查：最终定位到 glibc 2.17 的隐藏并发问题 | Oak">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一次诡异的 fork 死锁排查：最终定位到 glibc 2.17 的隐藏并发问题<a href="https://gitee.com/OakMolecule/blog/tree/master/source/_posts/%E8%AE%B0%E4%B8%80%E6%AC%A1fork%E6%AD%BB%E9%94%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pen-nib"></i></a>
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-06-23 17:27:50" itemprop="dateCreated datePublished" datetime="2026-06-23T17:27:50+08:00">2026-06-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>某日客户反馈，软件在 CentOS 7 上突然离线。</p>
+<p>登录机器后发现进程还在，但 CPU 使用率为 0，也没有任何日志输出。用 gdb 附加上去一看，程序已经陷入死锁。</p>
+<p>更诡异的是，卡住的位置竟然是 <code>fork()</code>。</p>
+<span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(gdb) bt</span><br><span class="line">#0  __lll_lock_wait_private () at ../nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S:95</span><br><span class="line">#1  0x00007ffff73d0b17 in _L_lock_16342 () from /lib64/libc.so.6</span><br><span class="line">#2  0x00007ffff73cd4b0 in __malloc_fork_lock_parent () at arena.c:240</span><br><span class="line">#3  0x00007ffff740dadc in __libc_fork () at ../nptl/sysdeps/unix/sysv/linux/fork.c:123</span><br><span class="line">#4  0x00000000004007e0 in fork_thread_start (arg=0x0) at lock.c:18</span><br><span class="line">#5  0x00007ffff7bc6ea5 in start_thread (arg=0x7ffff4dfc700) at pthread_create.c:307</span><br><span class="line">#6  0x00007ffff7446b0d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:111</span><br></pre></td></tr></table></figure>
+
+<p>看到这里第一反应是：</p>
+<blockquote>
+<p><code>fork()</code> 是 libc 的基础函数，怎么可能死锁？</p>
+</blockquote>
+<h2 id="问题复现"><a href="#问题复现" class="headerlink" title="问题复现"></a>问题复现</h2><p>问题依赖于 glibc 2.17，直接在 CentOS 7 上即可复现。</p>
+<p>下面代码是定位最终问题后，抽取出的核心代码逻辑，方便大家调试复现：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;malloc.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> *<span class="title function_">thread_start</span><span class="params">(<span class="type">void</span> *arg)</span> &#123;</span><br><span class="line">  malloc_trim(<span class="number">0</span>);</span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// worker</span></span><br><span class="line">    sleep(<span class="number">10</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> *<span class="title function_">fork_thread_start</span><span class="params">(<span class="type">void</span> *arg)</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (fork() == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// wait child exit</span></span><br><span class="line">    sleep(<span class="number">10</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">  <span class="type">pthread_t</span> tid;</span><br><span class="line">  <span class="type">pthread_t</span> tid2;</span><br><span class="line">  <span class="type">pthread_t</span> tid3;</span><br><span class="line">  <span class="type">pthread_t</span> tid4;</span><br><span class="line"></span><br><span class="line">  pthread_create(&amp;tid, <span class="literal">NULL</span>, &amp;thread_start, <span class="literal">NULL</span>);</span><br><span class="line">  pthread_create(&amp;tid2, <span class="literal">NULL</span>, &amp;thread_start, <span class="literal">NULL</span>);</span><br><span class="line">  pthread_create(&amp;tid3, <span class="literal">NULL</span>, &amp;fork_thread_start, <span class="literal">NULL</span>);</span><br><span class="line">  pthread_create(&amp;tid4, <span class="literal">NULL</span>, &amp;fork_thread_start, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">  pthread_join(tid, <span class="literal">NULL</span>);</span><br><span class="line">  pthread_join(tid2, <span class="literal">NULL</span>);</span><br><span class="line">  pthread_join(tid3, <span class="literal">NULL</span>);</span><br><span class="line">  pthread_join(tid4, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>死锁时所有线程栈如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">(gdb) thread apply all bt</span><br><span class="line">Thread 5 (Thread 0x7ffff4dfc700 (LWP 43257)):</span><br><span class="line">#0  __lll_lock_wait_private () at ../nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S:95</span><br><span class="line">#1  0x00007ffff73d0b17 in _L_lock_16342 () from /lib64/libc.so.6</span><br><span class="line">#2  0x00007ffff73cd4b0 in __malloc_fork_lock_parent () at arena.c:240</span><br><span class="line">#3  0x00007ffff740dadc in __libc_fork () at ../nptl/sysdeps/unix/sysv/linux/fork.c:123</span><br><span class="line">#4  0x00000000004007e0 in fork_thread_start (arg=0x0) at lock.c:18</span><br><span class="line">#5  0x00007ffff7bc6ea5 in start_thread (arg=0x7ffff4dfc700) at pthread_create.c:307</span><br><span class="line">#6  0x00007ffff7446b0d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:111</span><br><span class="line"></span><br><span class="line">Thread 4 (Thread 0x7ffff55fd700 (LWP 43256)):</span><br><span class="line">#0  0x00007ffff740d9fd in nanosleep () at ../sysdeps/unix/syscall-template.S:81</span><br><span class="line">#1  0x00007ffff740d894 in __sleep (seconds=0) at ../sysdeps/unix/sysv/linux/sleep.c:137</span><br><span class="line">#2  0x00000000004007ff in fork_thread_start (arg=0x0) at lock.c:24</span><br><span class="line">#3  0x00007ffff7bc6ea5 in start_thread (arg=0x7ffff55fd700) at pthread_create.c:307</span><br><span class="line">#4  0x00007ffff7446b0d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:111</span><br><span class="line"></span><br><span class="line">Thread 3 (Thread 0x7ffff5dfe700 (LWP 43255)):</span><br><span class="line">#0  __lll_lock_wait_private () at ../nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S:95</span><br><span class="line">#1  0x00007ffff73d0e18 in _L_lock_21569 () from /lib64/libc.so.6</span><br><span class="line">#2  0x00007ffff73cf803 in __malloc_trim (s=0) at malloc.c:4536</span><br><span class="line">#3  0x00000000004007c3 in thread_start (arg=0x0) at lock.c:11</span><br><span class="line">#4  0x00007ffff7bc6ea5 in start_thread (arg=0x7ffff5dfe700) at pthread_create.c:307</span><br><span class="line">#5  0x00007ffff7446b0d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:111</span><br><span class="line"></span><br><span class="line">Thread 2 (Thread 0x7ffff65ff700 (LWP 43254)):</span><br><span class="line">#0  0x00007ffff740d9fd in nanosleep () at ../sysdeps/unix/syscall-template.S:81</span><br><span class="line">#1  0x00007ffff740d894 in __sleep (seconds=0) at ../sysdeps/unix/sysv/linux/sleep.c:137</span><br><span class="line">#2  0x00000000004007cd in thread_start (arg=0x0) at lock.c:13</span><br><span class="line">#3  0x00007ffff7bc6ea5 in start_thread (arg=0x7ffff65ff700) at pthread_create.c:307</span><br><span class="line">#4  0x00007ffff7446b0d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:111</span><br><span class="line"></span><br><span class="line">Thread 1 (Thread 0x7ffff7fecf00 (LWP 43253)):</span><br><span class="line">#0  0x00007ffff7bc8017 in pthread_join (threadid=140737326872320, thread_return=0x0) at pthread_join.c:90</span><br><span class="line">#1  0x0000000000400888 in main () at lock.c:39</span><br></pre></td></tr></table></figure>
+
+<p>可以看到：</p>
+<ul>
+<li>一个线程卡在 <code>__malloc_fork_lock_parent()</code></li>
+<li>一个线程卡在 <code>malloc_trim()</code></li>
+<li>另一个 fork 线程已经返回</li>
+</ul>
+<p>整个过程没有使用任何用户态锁，全部都是 libc 内部逻辑。</p>
+<h2 id="两个疑点"><a href="#两个疑点" class="headerlink" title="两个疑点"></a>两个疑点</h2><h3 id="1-初始化流程非常简单"><a href="#1-初始化流程非常简单" class="headerlink" title="1. 初始化流程非常简单"></a>1. 初始化流程非常简单</h3><p>出问题时程序还处于早期初始化阶段，没有复杂业务逻辑，也没有任何显式加锁。</p>
+<h3 id="2-fork-怎么会死锁？"><a href="#2-fork-怎么会死锁？" class="headerlink" title="2. fork 怎么会死锁？"></a>2. fork 怎么会死锁？</h3><p><code>fork()</code> 是 libc 最基础的系统调用封装，本不应该出现这种问题。</p>
+<p>来来回回 review 了数遍代码，始终没有发现异常。</p>
+<h2 id="怀疑-jemalloc-和-ptmalloc-混用"><a href="#怀疑-jemalloc-和-ptmalloc-混用" class="headerlink" title="怀疑 jemalloc 和 ptmalloc 混用"></a>怀疑 jemalloc 和 ptmalloc 混用</h2><p>继续分析堆栈：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fork</span><br><span class="line"> └── __malloc_fork_lock_parent</span><br></pre></td></tr></table></figure>
+
+<p>而另一个线程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">malloc_trim</span><br><span class="line"> └── __malloc_trim</span><br></pre></td></tr></table></figure>
+
+<p>这时想起一个历史遗留：</p>
+<blockquote>
+<p>整个程序已经切换到了 jemalloc，但某些地方仍然在调用 ptmalloc 的 <code>malloc_trim()</code>。</p>
+</blockquote>
+<p>于是怀疑：</p>
+<blockquote>
+<p>jemalloc 与 ptmalloc 混用导致了并发 bug。</p>
+</blockquote>
+<p>沿着这个方向分析了几天，一无所获。</p>
+<p>最终只好下载 glibc 2.17 源码，对着堆栈逐行分析。</p>
+<h2 id="fork-内部做了什么"><a href="#fork-内部做了什么" class="headerlink" title="fork 内部做了什么"></a>fork 内部做了什么</h2><p>简化后，<code>fork()</code> 的流程如下：</p>
+<pre><code class="highlight mermaid">flowchart TD
+
+A[进入 fork] --&gt; B[加 IO 锁]
+B --&gt; C[加 ptmalloc 锁]
+C --&gt; D[fork 系统调用]
+
+D --&gt; E[父进程解锁 ptmalloc]
+D --&gt; F[子进程恢复 ptmalloc]
+
+E --&gt; G[解锁 IO]
+F --&gt; H[重置 IO]</code></pre>
+
+<p>整个加锁、解锁流程看起来完全对称，没有明显问题。</p>
+<p>翻遍了 GNU Bugzilla 上关于 <code>fork()</code> 的死锁问题，始终找不到和现象一致的 issue。</p>
+<p>最后只好回到最原始的方法：对照 glibc 源码和自己的代码，一行一行地比对，猜测哪里可能存在竞争窗口。</p>
+<h2 id="真正的问题：-malloc-initialized"><a href="#真正的问题：-malloc-initialized" class="headerlink" title="真正的问题：__malloc_initialized"></a>真正的问题：__malloc_initialized</h2><p>在 glibc 2.17 中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> __malloc_initialized = <span class="number">-1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>它有三个状态：</p>
+<ul>
+<li>-1：未初始化</li>
+<li>0：初始化中</li>
+<li>1：初始化完成</li>
+</ul>
+<p>初始化过程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ptmalloc_init()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (__malloc_initialized &gt;= <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    __malloc_initialized = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    __malloc_initialized = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而 fork 前后的加锁解锁：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">__malloc_fork_lock_parent()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (__malloc_initialized &lt; <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    加锁...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__malloc_fork_unlock_parent()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (__malloc_initialized &lt; <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    解锁...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看到这里，问题终于浮现出来。</p>
+<h3 id="ptmalloc-init-本身没有锁"><a href="#ptmalloc-init-本身没有锁" class="headerlink" title="ptmalloc_init 本身没有锁"></a>ptmalloc_init 本身没有锁</h3><p>整个初始化过程没有任何同步保护。</p>
+<p>这里有一个非常极限的临界区，B 线程在 A 线程将 <code>__malloc_initialized</code> 赋值为 <code>0</code> 前通过 <code>__malloc_initialized &gt;= 0</code>，然后在 <code>__malloc_fork_lock_parent()</code> 前 B 线程没有被调度到，两个条件缺一不可。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (__malloc_initialized &gt;= <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">__malloc_initialized = <span class="number">0</span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>于是可能出现下面的时序：</p>
+<pre><code class="highlight mermaid">sequenceDiagram
+
+participant A as Thread A
+participant B as Thread B
+participant C as Thread C
+
+A-&gt;&gt;A: ptmalloc_init()
+B-&gt;&gt;B: ptmalloc_init()
+A-&gt;&gt;A: __malloc_initialized = 0
+
+A-&gt;&gt;A: 初始化完成
+A-&gt;&gt;A: __malloc_initialized = 1
+
+A-&gt;&gt;A: fork()
+A-&gt;&gt;A: __malloc_fork_lock_parent()
+A-&gt;&gt;A: 获取 list_lock
+
+B-&gt;&gt;B: __malloc_initialized = 0
+
+A-&gt;&gt;A: __malloc_fork_unlock_parent()
+A-&gt;&gt;A: 判断 __malloc_initialized &lt; 1
+A-&gt;&gt;A: 直接 return
+
+Note over A: list_lock 永远不释放
+
+C-&gt;&gt;C: 后续 fork()
+C-&gt;&gt;C: 卡死</code></pre>
+
+<p>于是：</p>
+<blockquote>
+<p>锁加上了，但由于 <code>__malloc_initialized</code> 被其它线程重新改成 0，导致解锁逻辑没有执行。</p>
+</blockquote>
+<p>最终所有后续 fork 全部卡死。</p>
+<h2 id="为什么会触发？"><a href="#为什么会触发？" class="headerlink" title="为什么会触发？"></a>为什么会触发？</h2><p>正常情况下，这个问题几乎不会出现。</p>
+<p>因为，程序启动阶段只要发生一次 <code>malloc</code>，ptmalloc 就已经初始化完成。即使 main 中没有调用 malloc，创建线程时内部也会进行内存分配。因此正常程序几乎不会遇到这里的竞争窗口。</p>
+<p>而我们的情况非常特殊：</p>
+<ul>
+<li>使用 jemalloc 代替 ptmalloc；</li>
+<li>内存分配都不会进入 glibc malloc；</li>
+<li>却仍然调用了 ptmalloc 的 <code>malloc_trim()</code>；</li>
+<li>多个线程同时进入初始化流程；</li>
+<li>又恰好有线程在执行 fork；</li>
+</ul>
+<p>最终触发了这个极其罕见的竞争条件。</p>
+<h2 id="glibc-的后续演进"><a href="#glibc-的后续演进" class="headerlink" title="glibc 的后续演进"></a>glibc 的后续演进</h2><p>后续在 glibc 的提交 <a target="_blank" rel="noopener" href="https://github.com/bminor/glibc/commit/cc35896ea3e4532919ec81b17f36299117debe79">bminor&#x2F;glibc@cc35896</a>（随 glibc 2.34 发布）中，<code>__malloc_initialized</code> 被简化为 <code>bool</code> 类型。</p>
+<p>初始化逻辑也随之变得直接：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">bool</span> __malloc_initialized = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">ptmalloc_init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (__malloc_initialized)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    __malloc_initialized = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// do something</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个版本里，三态状态机被彻底废弃，<code>-1 / 0 / 1</code> 消失，初始化只需表达一个事实：<strong>是否已经完成</strong>。</p>
+<p>fork 侧的代码也随之更简洁：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> __malloc_fork_lock_parent(<span class="type">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!__malloc_initialized)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    __libc_lock_lock(list_lock);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>后续还有一次更关键的调整：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/bminor/glibc/commit/25d37948c9f3f483d63302b9967b975d3bd74a4e">bminor&#x2F;glibc@25d3794</a>（随 glibc 2.42 发布） <code>ptmalloc_init</code> 被提前到了 <code>__libc_early_init</code> 阶段执行。</p>
+<p>换句话说：<strong>初始化从“可能并发发生的运行时行为”，变成了“进程启动阶段的确定行为”。</strong></p>
+<p>我们现在碰到的问题彻底不会出现了。</p>
+<h2 id="现有问题修改方式"><a href="#现有问题修改方式" class="headerlink" title="现有问题修改方式"></a>现有问题修改方式</h2><p>在我们的场景中，最快捷且简单的规避方式是：</p>
+<p>在 <code>main()</code> 中显式调用一次：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">malloc_trim(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>目的并不是“清理内存”，而是强制触发 ptmalloc 初始化，使其尽早完成。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这个问题最后确实落在 glibc 身上，但我认为这不能简单的归结于“这是 glibc 的 bug”。</p>
+<p>因为我认为 glibc 的设计里这里 <code>ptmalloc_init</code> 不会产生并发，我们的系统恰好让 <code>ptmalloc_init</code> 产生了并发，最终问题变成了一个组合条件，而不是单点错误。</p>
+<p>我不知道 glibc 后续的修复是否是发现了我们遇见的这个问题，至少在提交记录中未提及。但新版本的 glibc 也不会再触发这个问题了。</p>
+<p>至于那个在 <code>main()</code> 里莫名其妙的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">malloc_trim(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>希望未来某一天，不会有人觉得这是屎山代码，然后顺手把它删掉。</p>
+<p>毕竟，每一行看起来毫无道理的代码背后，可能都有一个神奇的 bug。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/glibc/" rel="tag"># glibc</a>
+              <a href="/tags/fork/" rel="tag"># fork</a>
+              <a href="/tags/jemalloc/" rel="tag"># jemalloc</a>
+              <a href="/tags/linux/" rel="tag"># linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/06/23/%E6%9C%89%E7%94%A8%E5%B7%A5%E5%85%B7%E6%88%96%E7%BD%91%E7%AB%99/" rel="prev" title="有用工具或网站">
+                  <i class="fa fa-angle-left"></i> 有用工具或网站
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/06/24/YouCompleteMe%E9%85%8D%E7%BD%AE/" rel="next" title="YouCompleteMe 配置">
+                  YouCompleteMe 配置 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2021 – 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Oak</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/OakMolecule" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
